@@ -12,8 +12,10 @@
 		325362F12249C6F500F524F8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 325362F02249C6F500F524F8 /* Assets.xcassets */; };
 		325362F42249C6F500F524F8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 325362F22249C6F500F524F8 /* Main.storyboard */; };
 		325362F72249C6F500F524F8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 325362F62249C6F500F524F8 /* main.m */; };
-		326F769F224B7B25005716EF /* TableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 326F769E224B7B25005716EF /* TableViewCell.m */; };
-		326F76A2224B8093005716EF /* UserDetailDataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 326F76A1224B8093005716EF /* UserDetailDataModel.m */; };
+		32BE37C2225306AB001809E6 /* TableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 32BE37C1225306AB001809E6 /* TableViewCell.m */; };
+		32BE37C52253131D001809E6 /* pick@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 32BE37C32253131D001809E6 /* pick@2x.png */; };
+		32BE37C62253131D001809E6 /* pick@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 32BE37C42253131D001809E6 /* pick@3x.png */; };
+		32BE37CC22531EB9001809E6 /* FunctionModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 32BE37CB22531EB9001809E6 /* FunctionModel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,10 +29,12 @@
 		325362F52249C6F500F524F8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		325362F62249C6F500F524F8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		325362F82249C6F500F524F8 /* CodeMixTool.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CodeMixTool.entitlements; sourceTree = "<group>"; };
-		326F769D224B7B25005716EF /* TableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableViewCell.h; sourceTree = "<group>"; };
-		326F769E224B7B25005716EF /* TableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableViewCell.m; sourceTree = "<group>"; };
-		326F76A0224B8093005716EF /* UserDetailDataModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserDetailDataModel.h; sourceTree = "<group>"; };
-		326F76A1224B8093005716EF /* UserDetailDataModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserDetailDataModel.m; sourceTree = "<group>"; };
+		32BE37C0225306AB001809E6 /* TableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableViewCell.h; sourceTree = "<group>"; };
+		32BE37C1225306AB001809E6 /* TableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableViewCell.m; sourceTree = "<group>"; };
+		32BE37C32253131D001809E6 /* pick@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pick@2x.png"; sourceTree = "<group>"; };
+		32BE37C42253131D001809E6 /* pick@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pick@3x.png"; sourceTree = "<group>"; };
+		32BE37CA22531EB9001809E6 /* FunctionModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FunctionModel.h; sourceTree = "<group>"; };
+		32BE37CB22531EB9001809E6 /* FunctionModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FunctionModel.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,14 +67,16 @@
 		325362E92249C6F200F524F8 /* CodeMixTool */ = {
 			isa = PBXGroup;
 			children = (
+				32BE37C32253131D001809E6 /* pick@2x.png */,
+				32BE37C42253131D001809E6 /* pick@3x.png */,
 				325362EA2249C6F200F524F8 /* AppDelegate.h */,
 				325362EB2249C6F200F524F8 /* AppDelegate.m */,
 				325362ED2249C6F200F524F8 /* ViewController.h */,
 				325362EE2249C6F200F524F8 /* ViewController.m */,
-				326F76A0224B8093005716EF /* UserDetailDataModel.h */,
-				326F76A1224B8093005716EF /* UserDetailDataModel.m */,
-				326F769D224B7B25005716EF /* TableViewCell.h */,
-				326F769E224B7B25005716EF /* TableViewCell.m */,
+				32BE37CA22531EB9001809E6 /* FunctionModel.h */,
+				32BE37CB22531EB9001809E6 /* FunctionModel.m */,
+				32BE37C0225306AB001809E6 /* TableViewCell.h */,
+				32BE37C1225306AB001809E6 /* TableViewCell.m */,
 				325362F02249C6F500F524F8 /* Assets.xcassets */,
 				325362F22249C6F500F524F8 /* Main.storyboard */,
 				325362F52249C6F500F524F8 /* Info.plist */,
@@ -138,7 +144,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				325362F12249C6F500F524F8 /* Assets.xcassets in Resources */,
+				32BE37C52253131D001809E6 /* pick@2x.png in Resources */,
 				325362F42249C6F500F524F8 /* Main.storyboard in Resources */,
+				32BE37C62253131D001809E6 /* pick@3x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -149,9 +157,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				326F76A2224B8093005716EF /* UserDetailDataModel.m in Sources */,
 				325362EF2249C6F200F524F8 /* ViewController.m in Sources */,
-				326F769F224B7B25005716EF /* TableViewCell.m in Sources */,
+				32BE37C2225306AB001809E6 /* TableViewCell.m in Sources */,
+				32BE37CC22531EB9001809E6 /* FunctionModel.m in Sources */,
 				325362F72249C6F500F524F8 /* main.m in Sources */,
 				325362EC2249C6F200F524F8 /* AppDelegate.m in Sources */,
 			);

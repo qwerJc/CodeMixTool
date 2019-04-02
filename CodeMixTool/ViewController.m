@@ -6,19 +6,23 @@
 //  Copyright © 2019年 JJC. All rights reserved.
 //
 #define WindowHeight CGRectGetHeight(self.view.frame)
-#define MacOriginY(originY) WindowHeight - originY
+#define MarginTop(originY) WindowHeight - originY
 
 #import "ViewController.h"
 #import "TableViewCell.h"
-#import "UserDetailDataModel.h"
+#import "DetailView.h"
+#import "FunctionModel.h"
 
 @interface ViewController()<NSTableViewDelegate,NSTableViewDataSource>
-@property (strong, nonatomic) NSMutableArray *dataSource;
-@property (weak) IBOutlet NSTableView *tableview;
+//@property (strong, nonatomic) NSMutableArray *dataSource;
+
+@property (strong, nonatomic) NSTableView *tableView;
+@property (strong, nonatomic) NSMutableArray<FunctionModel *> *arrData;
 
 @property (strong, nonatomic) NSTextField *txfProjPath;
 @property (strong, nonatomic) NSTextField *txfCodePath;
 @property (strong, nonatomic) NSTextField *txfSonPath;
+
 @end
 
 @implementation ViewController
@@ -28,41 +32,117 @@
 
     // Do any additional setup after loading the view.
 //    [self createUI];
+    [self createData];
     [self createUI];
-    
 }
 
-//- (void)createUI1 {
-//    self.dataSource = [NSMutableArray new];
-//
-//    CGFloat viewWidth = CGRectGetWidth(self.view.bounds);
-//    CGFloat viewHeight = CGRectGetHeight(self.view.bounds);
-//
-//    self.tableview = [[NSTableView alloc] initWithFrame:CGRectMake(20, MacOriginY(100),viewWidth - 40, viewHeight -120)];
-//    self.tableview.delegate = self;
-//    self.tableview.dataSource = self;
-//    self.tableview.backgroundColor = [NSColor colorWithRed:1 green:1 blue:0 alpha:1];
-//    [self.view addSubview:self.tableview];
-//
-//    //设置Cell 高度
-//    [self.tableview setRowHeight:45];
-//
-//    //创建数据Model
-//    NSArray *userIdArray = @[@"101",@"102",@"103",@"104"];
-//    NSArray *userNameArray = @[@"Allen",@"Jack",@"Luck",@"Tony"];
-//    NSArray *userAvatarArray = @[[NSImage imageNamed:@"tag_1.png"],[NSImage imageNamed:@"tag_2.jpg"],[NSImage imageNamed:@"tag_3.jpg"],[NSImage imageNamed:@"tag_4.jpeg"]];
-//
-//    for (NSInteger i = 0; i < userNameArray.count; i++) {
-//        UserDetailDataModel *detail = [[UserDetailDataModel alloc]init];
-//        detail.userid = userIdArray[i];
-//        detail.username = userNameArray[i];
-//        detail.useravatar = userAvatarArray[i];
-//        [self.dataSource addObject:detail];
-//
+- (void)createData {
+    _arrData = [NSMutableArray arrayWithCapacity:0];
+    
+    FunctionModel *data1 = [[FunctionModel alloc] initWithTitle:@"添加固定类前缀" andIsNeedParameter:NO];
+    FunctionModel *data2 = [[FunctionModel alloc] initWithTitle:@"添加随机类前缀" andIsNeedParameter:NO];
+    FunctionModel *data3 = [[FunctionModel alloc] initWithTitle:@"替换类前缀" andIsNeedParameter:YES];
+    
+    FunctionModel *data4 = [[FunctionModel alloc] initWithTitle:@"删除换行注释NSLog" andIsNeedParameter:NO];
+    
+    [_arrData addObject:data1];
+    [_arrData addObject:data2];
+    [_arrData addObject:data3];
+    [_arrData addObject:data4];
+}
+
+- (void)createUI {
+    
+    CGFloat viewWidth = CGRectGetWidth(self.view.bounds);
+    CGFloat viewHeight = CGRectGetHeight(self.view.bounds);
+    
+    NSButton *btnProjPath = [[NSButton alloc] initWithFrame:CGRectMake(20, MarginTop(50), 200, 34)];
+    btnProjPath.title = @"选择.xcodeproj文件";
+    [btnProjPath setAction:@selector(onOpen)];
+    [self.view addSubview:btnProjPath];
+    
+    _txfProjPath = [[NSTextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(btnProjPath.frame) +20,CGRectGetMinY(btnProjPath.frame)-10,viewWidth - CGRectGetWidth(btnProjPath.frame) - 40, 40)];
+    [_txfProjPath setStringValue:@"输入.xcodeproj的绝对路径"];
+    //    _txfProjPath.alignment = NSTextAlignmentCenter;
+    [_txfProjPath setBezeled:NO];
+    [_txfProjPath setDrawsBackground:NO];
+    [_txfProjPath setEditable:NO];
+    [_txfProjPath setSelectable:NO];
+    [self.view addSubview:_txfProjPath];
+    
+    NSButton *btnCodePath = [[NSButton alloc] initWithFrame:CGRectMake(20, MarginTop(100), 200, 34)];
+    btnCodePath.title = @"选择代码文件夹";
+    [btnCodePath setAction:@selector(onOpenCodePath)];
+    [self.view addSubview:btnCodePath];
+    
+    _txfCodePath = [[NSTextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(btnCodePath.frame) +20,CGRectGetMinY(btnCodePath.frame)-10,viewWidth - CGRectGetWidth(btnCodePath.frame) - 40, 40)];
+    [_txfCodePath setStringValue:@"选择代码文件夹的绝对路径"];
+    [_txfCodePath setBezeled:NO];
+    [_txfCodePath setDrawsBackground:NO];
+    [_txfCodePath setEditable:NO];
+    [_txfCodePath setSelectable:NO];
+    [self.view addSubview:_txfCodePath];
+    
+    NSButton *btnChoseSonPath = [[NSButton alloc] initWithFrame:CGRectMake(20, MarginTop(150), 200, 34)];
+    btnChoseSonPath.title = @"选择需要执行的子文件夹";
+    [btnChoseSonPath setAction:@selector(onOpenSonPath)];
+    [self.view addSubview:btnChoseSonPath];
+    
+    _txfSonPath = [[NSTextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(btnCodePath.frame) +20,CGRectGetMinY(btnCodePath.frame)-10,viewWidth - CGRectGetWidth(btnCodePath.frame) - 40, 40)];
+    [_txfCodePath setStringValue:@"选择子文件夹的绝对路径"];
+    [_txfCodePath setBezeled:NO];
+    [_txfCodePath setDrawsBackground:NO];
+    [_txfCodePath setEditable:NO];
+    [_txfCodePath setSelectable:NO];
+    [self.view addSubview:_txfCodePath];
+    
+//    _dataArr = [NSMutableArray arrayWithCapacity:0];
+//    for (int i = 0; i< 20; i++) {
+//        [_dataArr addObject:[NSString stringWithFormat:@"%d 行数据",i]];
 //    }
-//
-//    [self.tableview reloadData];
-//}
+    
+//    NSLog(@"min %f,Max %f,o:%f",CGRectGetMinY(btnChoseSonPath.frame),CGRectGetMaxY(btnChoseSonPath.frame),MarginTop(300));
+    _tableView = [[NSTableView alloc] initWithFrame:CGRectMake(CGRectGetMinX(btnChoseSonPath.frame), MarginTop(350), 300, 300)];
+    NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier:@"zzzJC"];
+    column.width = CGRectGetWidth(_tableView.frame);
+    [_tableView addTableColumn:column];
+    _tableView.delegate = self;
+    _tableView.dataSource = self;
+    [_tableView reloadData];
+//    [self.view addSubview:_tableView];
+    
+    for (int i =0 ; i<[_arrData count]; i++) {
+//        TableViewCell *cell = [[TableViewCell alloc] initWithFrame:CGRectMake(20, MarginTop(200 - 30*i), viewWidth - 40, 20)];
+        
+        TableViewCell *cellView = [[TableViewCell alloc] initWithFrame:CGRectMake(20, MarginTop(200 - 30*i), viewWidth - 40, 20)
+                                                              andTitle:_arrData[i].title
+                                                    andIsNeedParameter:_arrData[i].isNeedParameter];
+        [self.view addSubview:cellView];
+    }
+    
+//    for (int i =0 ; i<3; i++) {
+//        DetailView *dView = [[DetailView alloc] initWithFrame:CGRectMake(20, MarginTop(200 - 50*i), viewWidth - 40, 30)];
+//        dView.txfInfo.stringValue = @"qwerewr";
+//        [self.view addSubview:dView];
+//    }
+
+}
+
+//cell 个数
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
+    return  10;
+}
+
+- (nullable NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
+    TableViewCell *cell = [tableView makeViewWithIdentifier:@"cellID" owner:self];
+    if (!cell) {
+        cell = [[TableViewCell alloc] initWithFrame:CGRectMake(0, 0, 400, 100)];
+        cell.txfInfo.stringValue = @"qwerewr";
+        cell.identifier = @"cellID";
+    }
+    return cell;
+}
+
 
 - (void)onOpen {
     NSOpenPanel *oPanel = [NSOpenPanel openPanel];
@@ -102,80 +182,7 @@
     }
 }
 
-- (void)createUI {
-    
-    CGFloat viewWidth = CGRectGetWidth(self.view.bounds);
-    CGFloat viewHeight = CGRectGetHeight(self.view.bounds);
-    
-    NSButton *btnProjPath = [[NSButton alloc] initWithFrame:CGRectMake(20, MacOriginY(50), 120, 34)];
-    btnProjPath.title = @"选择.xcodeproj文件";
-    [btnProjPath setAction:@selector(onOpen)];
-    [self.view addSubview:btnProjPath];
-    
-    _txfProjPath = [[NSTextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(btnProjPath.frame) +20,CGRectGetMinY(btnProjPath.frame)-10,viewWidth - CGRectGetWidth(btnProjPath.frame) - 40, 40)];
-    [_txfProjPath setStringValue:@"输入.xcodeproj的绝对路径"];
-//    _txfProjPath.alignment = NSTextAlignmentCenter;
-    [_txfProjPath setBezeled:NO];
-    [_txfProjPath setDrawsBackground:NO];
-    [_txfProjPath setEditable:NO];
-    [_txfProjPath setSelectable:NO];
-    [self.view addSubview:_txfProjPath];
-    
-    NSButton *btnCodePath = [[NSButton alloc] initWithFrame:CGRectMake(20, MacOriginY(100), 120, 34)];
-    btnCodePath.title = @"选择代码文件夹";
-    [btnCodePath setAction:@selector(onOpenCodePath)];
-    [self.view addSubview:btnCodePath];
-    
-    _txfCodePath = [[NSTextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(btnCodePath.frame) +20,CGRectGetMinY(btnCodePath.frame)-10,viewWidth - CGRectGetWidth(btnCodePath.frame) - 40, 40)];
-    [_txfCodePath setStringValue:@"选择代码文件夹的绝对路径"];
-    [_txfCodePath setBezeled:NO];
-    [_txfCodePath setDrawsBackground:NO];
-    [_txfCodePath setEditable:NO];
-    [_txfCodePath setSelectable:NO];
-    [self.view addSubview:_txfCodePath];
-    
-    NSButton *btnChoseSonPath = [[NSButton alloc] initWithFrame:CGRectMake(20, MacOriginY(150), 120, 34)];
-    btnChoseSonPath.title = @"选择需要执行的子文件夹";
-    [btnChoseSonPath setAction:@selector(onOpenSonPath)];
-    [self.view addSubview:btnChoseSonPath];
-    
-    _txfSonPath = [[NSTextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(btnCodePath.frame) +20,CGRectGetMinY(btnCodePath.frame)-10,viewWidth - CGRectGetWidth(btnCodePath.frame) - 40, 40)];
-    [_txfCodePath setStringValue:@"选择子文件夹的绝对路径"];
-    [_txfCodePath setBezeled:NO];
-    [_txfCodePath setDrawsBackground:NO];
-    [_txfCodePath setEditable:NO];
-    [_txfCodePath setSelectable:NO];
-    [self.view addSubview:_txfCodePath];
 
-//    NSTableView *tableview = [[NSTableView alloc] initWithFrame:CGRectMake(20, MacOriginY(200),viewWidth - 40, viewHeight -120)];
-//    tableview.delegate = self;
-//    tableview.dataSource = self;
-//    tableview.backgroundColor = [NSColor colorWithRed:1 green:1 blue:0 alpha:1];
-//    [self.view addSubview:tableview];
-//
-//    NSTableColumn * column = [[NSTableColumn alloc]initWithIdentifier:@"test"];
-//    NSTableColumn * column2 = [[NSTableColumn alloc]initWithIdentifier:@"test2"];
-//    column2.width = 100;
-//    column2.minWidth = 100;
-//    column2.maxWidth = 100;
-//    column2.title = @"数据";
-//    column2.editable = YES ;
-//    column2.headerToolTip = @"提示";
-//    column2.hidden=NO;
-//    column2.sortDescriptorPrototype = [NSSortDescriptor sortDescriptorWithKey:@"title" ascending:NO];
-//    column.resizingMask =NSTableColumnUserResizingMask;
-//
-//    [tableview addTableColumn:column];
-    
-    _tableview.delegate = self;
-    _tableview.dataSource = self;
-    
-}
-
-//cell 个数
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
-    return  5;
-}
 
 //- (NSView *)tableView:(NSTableView *)tableView
 //   viewForTableColumn:(NSTableColumn *)tableColumn
@@ -200,14 +207,15 @@
 //    return cell;
 //}
 
-- (NSView*)tableView:(NSTableView*)tableView
-  viewForTableColumn:(NSTableColumn*)tableColumn
-                 row:(NSInteger)row {
-    NSTableCellView *cell = [tableView makeViewWithIdentifier:@"NSTableCellView的标识" owner:nil];
-//    cell.imageView.image = [NSImage imageNamed:dic[@"icon"]];
-    cell.textField.stringValue = @"weqr";
-    return cell;
-}
+//- (NSView*)tableView:(NSTableView*)tableView
+//  viewForTableColumn:(NSTableColumn*)tableColumn
+//                 row:(NSInteger)row {
+////    NSTableCellView *cell = [tableView makeViewWithIdentifier:@"NSTableCellView的标识" owner:nil];
+//    NSTableCellView *cell = [[NSTableCellView alloc] init];
+//    cell.textField.stringValue = @"weqr";
+//    return cell;
+//}
+
 ////设置列表Value
 //- (nullable id)tableView:(NSTableView *)tableView objectValueForTableColumn:(nullable NSTableColumn *)tableColumn row:(NSInteger)row
 //{
