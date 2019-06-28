@@ -9,10 +9,11 @@
 #import "FunctionModel.h"
 
 @implementation FunctionModel
-- (instancetype)initWithTitle:(NSString *)title andIsNeedParameter:(BOOL)isNeedParameter {
+- (instancetype)initWithTitle:(NSString *)title andTask:(EnumTaskType)task andIsNeedParameter:(BOOL)isNeedParameter {
     self = [super init];
     if (self) {
         _title = title;
+        _task = task;
         _isNeedParameter = isNeedParameter;
     }
     return self;

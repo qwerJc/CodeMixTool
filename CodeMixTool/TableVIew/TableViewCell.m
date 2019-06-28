@@ -7,8 +7,10 @@
 //
 
 #import "TableViewCell.h"
+
+
 @interface TableViewCell()
-@property (strong, nonatomic) NSButton *btn;
+
 @end
 
 @implementation TableViewCell
@@ -16,38 +18,39 @@
     self = [super initWithFrame:frameRect];
     if (self) {
         [self createUIWithTitle:@""
+                         andTag:0
              andIsNeedParameter:NO];
     }
     return self;
 }
 
 - (instancetype)initWithFrame:(NSRect)frameRect
+                       andTag:(EnumTaskType)tag
                      andTitle:(NSString *)title
            andIsNeedParameter:(BOOL)isNeedParameter {
     self = [super initWithFrame:frameRect];
     if (self) {
         [self createUIWithTitle:title
+                         andTag:tag
              andIsNeedParameter:isNeedParameter];
     }
     return self;
 }
 
 - (void)createUIWithTitle:(NSString *)title
+                   andTag:(EnumTaskType)tag
        andIsNeedParameter:(BOOL)isNeedParameter {
     self.wantsLayer = true;///设置背景颜色
     self.layer.backgroundColor = [NSColor orangeColor].CGColor;
     [self setNeedsDisplay:YES];
     
-    _btn = [NSButton checkboxWithTitle:title target:self action:nil];
-    _btn.allowsMixedState = NO;
-    [self addSubview:_btn];
-    
-//    NSButton *btnRadio2 = [NSButton radioButtonWithTitle:@"zzz" target:self action:@selector(changeChoseState:)];
-//    NSLog(@"%ld",(long)btnRadio2.state);
-//    [self addSubview:btnRadio2];
-    
+    _btncheckBox = [NSButton checkboxWithTitle:title target:self action:nil];
+    _btncheckBox.allowsMixedState = NO;
+    _btncheckBox.tag = tag;
+    [self addSubview:_btncheckBox];
+        
     if (isNeedParameter) {
-        _txfInfo = [[NSTextField alloc] initWithFrame:CGRectMake(CGRectGetWidth(_btn.frame) + 20,0,300, 20)];
+        _txfInfo = [[NSTextField alloc] initWithFrame:CGRectMake(CGRectGetWidth(_btncheckBox.frame) + 20,0,300, 20)];
         [_txfInfo setStringValue:@"选择子文件夹的绝对路径"];
         [_txfInfo setBezeled:NO];
         [_txfInfo setDrawsBackground:NO];
@@ -56,7 +59,6 @@
         [self addSubview:_txfInfo];
     }
 }
-
 
 
 - (void)drawRect:(NSRect)dirtyRect {

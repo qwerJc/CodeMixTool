@@ -10,8 +10,8 @@
 
 #import "ViewController.h"
 #import "TableViewCell.h"
-#import "DetailView.h"
 #import "FunctionModel.h"
+#import "FileManager.h"
 
 @interface ViewController()<NSTableViewDelegate,NSTableViewDataSource>
 //@property (strong, nonatomic) NSMutableArray *dataSource;
@@ -22,6 +22,10 @@
 @property (strong, nonatomic) NSTextField *txfProjPath;
 @property (strong, nonatomic) NSTextField *txfCodePath;
 @property (strong, nonatomic) NSTextField *txfSonPath;
+
+@property (strong, nonatomic) FileManager *fileManager;
+
+@property (assign, nonatomic) EnumTaskType task;                    // 任务数组
 
 @end
 
@@ -39,11 +43,11 @@
 - (void)createData {
     _arrData = [NSMutableArray arrayWithCapacity:0];
     
-    FunctionModel *data1 = [[FunctionModel alloc] initWithTitle:@"添加固定类前缀" andIsNeedParameter:NO];
-    FunctionModel *data2 = [[FunctionModel alloc] initWithTitle:@"添加随机类前缀" andIsNeedParameter:NO];
-    FunctionModel *data3 = [[FunctionModel alloc] initWithTitle:@"替换类前缀" andIsNeedParameter:YES];
+    FunctionModel *data1 = [[FunctionModel alloc] initWithTitle:@"添加固定类前缀" andTask:EnumTaskTypeAddFixClassPreName andIsNeedParameter:NO];
+    FunctionModel *data2 = [[FunctionModel alloc] initWithTitle:@"添加随机类前缀" andTask:EnumTaskTypeAddRandomClassPreName andIsNeedParameter:NO];
+    FunctionModel *data3 = [[FunctionModel alloc] initWithTitle:@"替换类前缀" andTask:EnumTaskTypeReplaceClassPreName andIsNeedParameter:YES];
     
-    FunctionModel *data4 = [[FunctionModel alloc] initWithTitle:@"删除换行注释NSLog" andIsNeedParameter:NO];
+    FunctionModel *data4 = [[FunctionModel alloc] initWithTitle:@"删除换行注释NSLog" andTask:EnumTaskTypeDelLog andIsNeedParameter:NO];
     
     [_arrData addObject:data1];
     [_arrData addObject:data2];
@@ -96,53 +100,51 @@
     [_txfCodePath setSelectable:NO];
     [self.view addSubview:_txfCodePath];
     
-//    _dataArr = [NSMutableArray arrayWithCapacity:0];
-//    for (int i = 0; i< 20; i++) {
-//        [_dataArr addObject:[NSString stringWithFormat:@"%d 行数据",i]];
-//    }
-    
-//    NSLog(@"min %f,Max %f,o:%f",CGRectGetMinY(btnChoseSonPath.frame),CGRectGetMaxY(btnChoseSonPath.frame),MarginTop(300));
-    _tableView = [[NSTableView alloc] initWithFrame:CGRectMake(CGRectGetMinX(btnChoseSonPath.frame), MarginTop(350), 300, 300)];
-    NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier:@"zzzJC"];
-    column.width = CGRectGetWidth(_tableView.frame);
-    [_tableView addTableColumn:column];
-    _tableView.delegate = self;
-    _tableView.dataSource = self;
-    [_tableView reloadData];
-//    [self.view addSubview:_tableView];
-    
+    // item
     for (int i =0 ; i<[_arrData count]; i++) {
-//        TableViewCell *cell = [[TableViewCell alloc] initWithFrame:CGRectMake(20, MarginTop(200 - 30*i), viewWidth - 40, 20)];
-        
         TableViewCell *cellView = [[TableViewCell alloc] initWithFrame:CGRectMake(20, MarginTop(200 - 30*i), viewWidth - 40, 20)
+                                                                andTag:i
                                                               andTitle:_arrData[i].title
                                                     andIsNeedParameter:_arrData[i].isNeedParameter];
+    
+        [cellView.btncheckBox setTarget:self];
+        [cellView.btncheckBox setAction:@selector(onCheckBoxAction:)];
+        cellView.btncheckBox.tag = i;
         [self.view addSubview:cellView];
     }
+
+    NSButton *btnRun = [NSButton buttonWithTitle:@"Run" target:self action:@selector(onRunAction)];
+    btnRun.frame = CGRectMake(50, 50, 200, 100);
+    [self.view addSubview:btnRun];
     
-//    for (int i =0 ; i<3; i++) {
-//        DetailView *dView = [[DetailView alloc] initWithFrame:CGRectMake(20, MarginTop(200 - 50*i), viewWidth - 40, 30)];
-//        dView.txfInfo.stringValue = @"qwerewr";
-//        [self.view addSubview:dView];
-//    }
-
 }
 
-//cell 个数
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
-    return  10;
-}
-
-- (nullable NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
-    TableViewCell *cell = [tableView makeViewWithIdentifier:@"cellID" owner:self];
-    if (!cell) {
-        cell = [[TableViewCell alloc] initWithFrame:CGRectMake(0, 0, 400, 100)];
-        cell.txfInfo.stringValue = @"qwerewr";
-        cell.identifier = @"cellID";
+#pragma mark - BtnAction
+- (void)try1 {
+    
+    if (_task & EnumTaskTypeAddFixClassPreName) {
+        NSLog(@"选择了 添加固定的 类名前缀");
     }
-    return cell;
+    
+    if (_task & EnumTaskTypeAddRandomClassPreName) {
+        NSLog(@"选择了 添加随机的 类名前缀");
+    }
+    
+    if (_task & EnumTaskTypeReplaceClassPreName) {
+        NSLog(@"选择了 替换 类前缀");
+    }
+    
+    if (_task & EnumTaskTypeDelLog) {
+        NSLog(@"选择了 删除 NSLog");
+    }
 }
 
+- (void)onCheckBoxAction:(NSButton *)btn {
+    if (btn.tag & _task) {
+        
+    }
+    NSLog(@"click:zz,%ld",(long)btn.tag);
+}
 
 - (void)onOpen {
     NSOpenPanel *oPanel = [NSOpenPanel openPanel];
@@ -151,8 +153,16 @@
     NSInteger finded = [oPanel runModal]; //获取panel的响应
     
     if (finded == NSModalResponseOK) {
-        NSLog(@"选择路径：%@",[oPanel URL]);
-        [_txfProjPath setStringValue:[NSString stringWithFormat:@"%@",[oPanel URL]]];
+        NSString *newPath;
+        
+        NSString *preString = [[NSString stringWithFormat:@"%@",[oPanel URL]] substringToIndex:7];
+        if ([preString isEqualToString:@"file://"]) {
+            newPath = [[NSString stringWithFormat:@"%@",[oPanel URL]] substringFromIndex:7];
+        } else {
+            newPath = [NSString stringWithFormat:@"%@",[oPanel URL]];
+        }
+        NSLog(@"选择路径：%@",newPath);
+        [_txfProjPath setStringValue:newPath];
     }
 }
 
@@ -163,8 +173,24 @@
     NSInteger finded = [oPanel runModal]; //获取panel的响应
     
     if (finded == NSModalResponseOK) {
-        NSLog(@"选择路径：%@",[oPanel URL]);
-        [_txfCodePath setStringValue:[NSString stringWithFormat:@"%@",[oPanel URL]]];
+        NSString *preString = [[NSString stringWithFormat:@"%@",[oPanel URL]] substringToIndex:7];
+        NSString *newPath;
+        
+        // 通常选取后 会以 "file:///Users/jiachen/demo/demo/" 这样的路径形式，需要去除头部的 file:// 和 尾部的 /
+        if ([preString isEqualToString:@"file://"]) {
+            newPath = [[NSString stringWithFormat:@"%@",[oPanel URL]] substringFromIndex:7];
+        } else {
+            newPath = [NSString stringWithFormat:@"%@",[oPanel URL]];
+        }
+        
+        NSString *endString = [newPath substringFromIndex:[newPath length]-1];
+        if ([endString isEqualToString:@"/"]) {
+            newPath = [newPath substringToIndex:newPath.length-1];
+        }
+        
+        NSLog(@"选择路径：%@",newPath);
+        [_txfCodePath setStringValue:newPath];
+        
     }
 }
 
@@ -182,56 +208,16 @@
     }
 }
 
-
-
-//- (NSView *)tableView:(NSTableView *)tableView
-//   viewForTableColumn:(NSTableColumn *)tableColumn
-//                  row:(NSInteger)row {
-//
-//    NSString *cellIdentifier = @"";
-//    NSString *text;
-//
-//    if (tableColumn == tableView.tableColumns[0]) {
-////        image = item.icon
-//        cellIdentifier = @"PickerCell";
-//    } else if (tableColumn == tableView.tableColumns[1]) {
-//        text = @"111";
-//        cellIdentifier = @"DescribeCell";
-//    } else if (tableColumn == tableView.tableColumns[2]) {
-//        text = @"222";
-//        cellIdentifier = @"DetailInfoCell";
-//    }
-//
-//    NSTableCellView *cell = [tableView makeViewWithIdentifier:cellIdentifier owner:nil];
-//    cell.textField.stringValue = text;
-//    return cell;
-//}
-
-//- (NSView*)tableView:(NSTableView*)tableView
-//  viewForTableColumn:(NSTableColumn*)tableColumn
-//                 row:(NSInteger)row {
-////    NSTableCellView *cell = [tableView makeViewWithIdentifier:@"NSTableCellView的标识" owner:nil];
-//    NSTableCellView *cell = [[NSTableCellView alloc] init];
-//    cell.textField.stringValue = @"weqr";
-//    return cell;
-//}
-
-////设置列表Value
-//- (nullable id)tableView:(NSTableView *)tableView objectValueForTableColumn:(nullable NSTableColumn *)tableColumn row:(NSInteger)row
-//{
-//    if([self.dataSource count] <= 0){
-//        return nil;
-//    }
-//    UserDetailDataModel *detail = self.dataSource[row];
-//
-//    return   [detail valueForKey: [tableColumn identifier]];
-//}
-////cell绑定对象模型
-//- (void)tableView:(NSTableView *)tableView setObjectValue:(nullable id)object forTableColumn:(nullable NSTableColumn *)tableColumn row:(NSInteger)row {
-//    UserDetailDataModel *detail = self.dataSource[row];
-//    [detail setValue:object forKey: [tableColumn identifier]];
-//}
-
+- (void)onRunAction {
+    
+    FileManager *fileManager = [[FileManager alloc] init];
+    [fileManager setupWithXcodeProjPath:_txfProjPath.stringValue andCodeFilePath:_txfCodePath.stringValue andTask:1];
+//    [fileManager deleteUselessCodeWithLineBreak:YES andAnnotation:YES andNSLog:YES];
+//    [fileManager randomClassName];
+    
+    [fileManager addSpamCode];
+    
+}
 
 - (void)setRepresentedObject:(id)representedObject {
     [super setRepresentedObject:representedObject];

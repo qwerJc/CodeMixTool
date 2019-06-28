@@ -7,12 +7,14 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "FunctionModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface TableViewCell : NSView
 @property (strong, nonatomic) NSTextField *txfInfo;
-- (instancetype)initWithFrame:(NSRect)frameRect andTitle:(NSString *)title andIsNeedParameter:(BOOL)isNeedParameter;
+@property (strong, nonatomic) NSButton *btncheckBox;
+- (instancetype)initWithFrame:(NSRect)frameRect andTag:(EnumTaskType)tag andTitle:(NSString *)title andIsNeedParameter:(BOOL)isNeedParameter;
 @end
 
 NS_ASSUME_NONNULL_END
