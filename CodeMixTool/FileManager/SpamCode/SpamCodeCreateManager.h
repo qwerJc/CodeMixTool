@@ -13,11 +13,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface SpamCodeCreateManager : NSObject
 
 /** 设置 代码中添加的垃圾 property数量 */
-- (void)setSpamPropertyNum:(NSUInteger)num;
+- (void)setSpamPropertyNum:(NSRange)rangePropertyNum;
 
 /** 设置 添加的垃圾Category中的property数量范围 和 Method数量范围 */
 - (void)setSpamCategoryPropertyNum:(NSRange)rangePropertyNum andMethodNum:(NSRange)rangeMethodNum;
 
+/* 开始添加垃圾代码*/
 - (void)startMakeSpamCodeWithCodeFilePath:(NSString *)codeFilePath andProjPath:(NSString *)projPath;
 @end
 

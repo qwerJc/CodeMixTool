@@ -137,6 +137,8 @@
     self.managerSpamCode = [[SpamCodeCreateManager alloc] init];
 
 //    [self.managerSpamCode setSpamPropertyNum:20];
+    [self.managerSpamCode setSpamPropertyNum:NSMakeRange(20, 20)];
+    
     [self.managerSpamCode setSpamCategoryPropertyNum:NSMakeRange(10, 10) andMethodNum:NSMakeRange(10, 10)];
     [self.managerSpamCode startMakeSpamCodeWithCodeFilePath:_codeFilePath andProjPath:_projPath];
 }
@@ -148,7 +150,6 @@
     [fileContent writeToFile:savePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
     if (error) {
         printf("保存文件 %s 失败：%s\n", fileContent.UTF8String, error.localizedDescription.UTF8String);
-        abort();
     } else {
         NSLog(@"保存成功 ：%@",savePath);
     }

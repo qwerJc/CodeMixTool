@@ -75,7 +75,6 @@ static const NSString *kRandomAlphabet = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
             NSMutableString *fileContent = [NSMutableString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:&error];
             if (error) {
                 printf("打开文件 %s 失败：%s\n", path.UTF8String, error.localizedDescription.UTF8String);
-                abort();
             }
             
             // \b表示单词的前后边界,\\为XCode对\的转义
@@ -89,7 +88,6 @@ static const NSString *kRandomAlphabet = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
             [fileContent writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&error];
             if (error) {
                 printf("保存文件 %s 失败：%s\n", path.UTF8String, error.localizedDescription.UTF8String);
-                abort();
             }
         }
     }
@@ -101,7 +99,6 @@ static const NSString *kRandomAlphabet = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
     [[NSFileManager defaultManager] moveItemAtPath:oldPath toPath:newPath error:&error];
     if (error) {
         printf("修改文件名称失败。\n  oldPath=%s\n  newPath=%s\n  ERROR:%s\n", oldPath.UTF8String, newPath.UTF8String, error.localizedDescription.UTF8String);
-        abort();
     }
 }
 #pragma mark - Return String

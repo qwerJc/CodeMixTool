@@ -37,7 +37,9 @@ typedef NS_ENUM(NSUInteger, objectiveType) {
 @property (strong, nonatomic, readonly) NSString *setMethodCode; // 重写的get方法的代码
 @property (strong, nonatomic, readonly) NSString *callMethodCode; // 调用重写的get方法的代码
 
-- (instancetype)initWithPropertyNameLength:(NSUInteger)length;
+//- (instancetype)initWithPropertyNameLength:(NSUInteger)length;
+- (instancetype)initWithPropertyNameLength:(NSRange)rangePropertyNameLength
+                               PropertyNum:(NSRange)rangePropertyNum;
 @end
 
 NS_ASSUME_NONNULL_END
