@@ -177,10 +177,10 @@
 		32A5DB4822C1FA0F00E2F12A /* SpamCode */ = {
 			isa = PBXGroup;
 			children = (
-				3278A99D22C3127A0045C748 /* Model */,
-				3279C0B422C4C94C0099AA11 /* tools */,
 				32A5DB4922C1FA4800E2F12A /* SpamCodeCreateManager.h */,
 				32A5DB4A22C1FA4800E2F12A /* SpamCodeCreateManager.m */,
+				3278A99D22C3127A0045C748 /* Model */,
+				3279C0B422C4C94C0099AA11 /* tools */,
 			);
 			path = SpamCode;
 			sourceTree = "<group>";
