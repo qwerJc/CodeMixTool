@@ -15,97 +15,79 @@
 @end
 
 @implementation SpamCategoryModel
-- (instancetype)initWithReturnType:(NSUInteger)typeIndex andPropertyNameLength:(NSUInteger)length {
+- (instancetype)initWithPropertyNameLength:(NSRange)rangePropertyNameLength
+                               PropertyNum:(NSRange)rangePropertyNum
+                           andMethodLength:(NSRange)rangeMethodNameLength
+                              andMethodNum:(NSRange)rangeMethodNum {
     self = [super init];
     if (self) {
         
         _arrMethodType = [NSArray arrayWithObjects:@"-",@"+", nil];
         
-        NSInteger type = arc4random()%8;
+        // 全部垃圾属性 初始化方法
+        NSMutableString *callAllPropertyCode = [[NSMutableString alloc] initWithString:@"- (void)jjc_category_callAllAddProperty {\n"];
+        
+        // 垃圾 属性 合集
+        NSInteger propertyNum = rangePropertyNum.location + arc4random()%rangePropertyNum.length;
+        NSMutableString *sumPropertyCode = [NSMutableString stringWithString:@""];
+        for (int i=0; i<propertyNum; i++) {
+            NSUInteger typeIndex = arc4random()%10;
+            NSInteger randomPropertyNameLength = rangePropertyNameLength.location + arc4random()%rangePropertyNameLength.length;
+            NSString *propertyName = [SpamCodeTools getRandomPropertyNameWithLength:randomPropertyNameLength];
+            NSString *tempPropertyCode = [SpamCodeTools getPropertyCodeWithName:propertyName andPropertyType:typeIndex];
+            
+            [sumPropertyCode appendString:tempPropertyCode];
+            
+            // 添加至 初始化方法
+            NSString *strCallCode = [NSString stringWithFormat:@"    self.%@ = %@;\n",
+                                     propertyName,
+                                     [SpamCodeTools getInitCodeWithClassIndex:typeIndex]];
+            [callAllPropertyCode appendString:strCallCode];
+           
+        }
+        [callAllPropertyCode appendString:@"}\n"];
+        _propertyCode = [sumPropertyCode copy];
+        _callMethodCode = [callAllPropertyCode copy];
+        
+        // 垃圾 类/成员方法-声明 合集
+        // 声明代码
+        NSMutableString *methodDeclarationCode = [[NSMutableString alloc] init];
+        // 方法 实现代码
+        NSMutableString *methodRealizationCode = [[NSMutableString alloc] init];
+        
+        NSInteger methodNum = rangeMethodNum.location + arc4random()%rangeMethodNum.length;
+        for (int i =0; i < methodNum; i++) {
+            NSInteger methodNameLength = rangeMethodNameLength.location + arc4random()%rangeMethodNameLength.length;
+            NSString *methodName = [SpamCodeTools getRandomMethodNameWithLength:methodNameLength];
+            
+            // 返回值类型
+            NSUInteger returnType = arc4random()%8;
+            
+            // 参数名（为nil时则没有参数）
+            NSString *paramName;
+            if (returnType > 0 && arc4random()%3 > 0) {
+                paramName = [SpamCodeTools getRandomPropertyNameWithLength:25];
+            }
+            
+            
+            NSString *methodCode = [SpamCodeTools getSpamMethodCodeWithMethodName:methodName
+                                                                    andReturnType:returnType
+                                                                     andParamName:paramName];
+            // 方法 声明代码
+            [methodDeclarationCode appendString:[NSString stringWithFormat:@"%@;\n",methodCode]];
+            
+            NSString *spamRealizationCode = [SpamCodeTools getRealizationCodeWithReturnType:returnType andParamName:paramName];
+            // 方法 实现代码
+            [methodRealizationCode appendString:[NSString stringWithFormat:@"\n%@ {\n    %@\n}\n",methodCode,spamRealizationCode]];
+        }
         
         
-        NSString *propertyName = [[FileMixedHelper randomCapital] stringByAppendingString:[FileMixedHelper randomString:length-1]];
+        _hMethodCode = [methodDeclarationCode copy];
+        _mMethodCode = [methodRealizationCode copy];
         
-        NSString *methodString = [self getMethodString];
-        // 带*的类型
-//        NSString *objectiveType = [self getObjectiveTypeWithIndex:typeIndex];
-//        NSString *initCode = [self getInitCodeWithClassIndex:typeIndex];
-//
-//        NSString *tempVarName = [FileMixedHelper randomString:arc4random()%20+15];
-//
-//        // Property Code
-//        NSString *strProperty = [NSString stringWithFormat:@"@property %@ %@%@;\n",[self getPropertyCodeWithIndex:typeIndex],objectiveType,propertyName];
-//        _propertyCode = strProperty;
-//
-//        // GetMethod Code
-//        NSString *strGetMethod = [NSString stringWithFormat:@"- (%@)%@ { \n    %@%@ = %@; \n    return %@;\n}\n",
-//                                  objectiveType,
-//                                  propertyName,
-//                                  objectiveType,
-//                                  tempVarName,
-//                                  initCode,
-//                                  tempVarName];
-//        _getMethodCode = strGetMethod;
-//
-//        // SetMethod Code
-//        NSString *strSetMethod = [NSString stringWithFormat:@"- (void)set%@:(%@)%@ { \n    _%@ = %@; \n}\n",
-//                                  propertyName,
-//                                  objectiveType,
-//                                  tempVarName,
-//                                  propertyName,
-//                                  tempVarName];
-//        _setMethodCode = strSetMethod;
-//
-//        // Call SpamCode]
-//        NSString *strCallCode = [NSString stringWithFormat:@"self.%@ = %@;\n",
-//                                 propertyName,
-//                                 [self getInitCodeWithClassIndex:typeIndex]];
-//        _callMethodCode = strCallCode;
+        
     }
     return self;
-}
-
-- (NSString *)getMethodString {
-    // 方法类型
-    NSString *strMethodType = _arrMethodType[arc4random()%2];
-    
-    // 方法名
-    NSUInteger methodNameLength = arc4random()%20+15;
-    NSString *strMethodName = [FileMixedHelper randomString:methodNameLength];
-    
-    // 参数
-    NSString *strParam;
-    NSUInteger paramNum = arc4random()%2;
-    if (paramNum == 1) {
-        NSUInteger typeParam = arc4random()%10;
-//        newMethodString = [NSString stringWithFormat:@"%@ ()"]
-    }
-    return @"";
-}
-
-- (NSString *)getReturnTypeWithIndex:(NSInteger)index {
-    switch (index) {
-        case EnumCategoryReturnType_Void:
-            return @"void";
-        case EnumCategoryReturnType_BOOL:
-            return @"BOOL";
-        case EnumCategoryReturnType_NSInteger:
-            return @"NSInteger";
-            
-        case EnumCategoryReturnType_NSObject:
-            return @"NSObject *";
-        case EnumCategoryReturnType_NSSet:
-            return @"NSSet *";
-            
-        case EnumCategoryReturnType_NSArray:
-            return @"NSArray *";
-        case EnumCategoryReturnType_NSString:
-            return @"NSString *";
-        case EnumCategoryReturnType_NSDictionary:
-            return @"NSDictionary *";
-        default:
-            return @"";
-    }
 }
 
 @end

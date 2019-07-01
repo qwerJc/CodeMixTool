@@ -26,7 +26,8 @@
         NSString *tempVarName = [FileMixedHelper randomString:arc4random()%20+15];
         
         // Property Code
-        NSString *strProperty = [NSString stringWithFormat:@"@property %@ %@%@;\n",[SpamCodeTools getPropertyCodeWithIndex:typeIndex],objectiveType,propertyName];
+//        NSString *strProperty = [NSString stringWithFormat:@"@property %@ %@%@;\n",[SpamCodeTools getPropertyCodeWithIndex:typeIndex],objectiveType,propertyName];
+        NSString *strProperty = [SpamCodeTools getPropertyCodeWithName:propertyName andPropertyType:typeIndex];
         _propertyCode = strProperty;
         
         // GetMethod Code

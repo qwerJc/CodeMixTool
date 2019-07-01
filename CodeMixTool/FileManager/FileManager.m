@@ -132,9 +132,29 @@
 
 #pragma mark - 添加垃圾代码
 - (void)addSpamCode {
+//    [self try];
+    
     self.managerSpamCode = [[SpamCodeCreateManager alloc] init];
 
-    [self.managerSpamCode setSpamPropertyNum:20];
+//    [self.managerSpamCode setSpamPropertyNum:20];
+    [self.managerSpamCode setSpamCategoryPropertyNum:NSMakeRange(10, 10) andMethodNum:NSMakeRange(10, 10)];
     [self.managerSpamCode startMakeSpamCodeWithCodeFilePath:_codeFilePath andProjPath:_projPath];
+}
+
+- (void)try {
+    NSString *fileContent = @"xzxzzsxvc";
+    NSError *error = nil;
+    NSString *savePath = @"/Users/jiachen/demo/demo/SpamCode/FatherView+qwerJJCzzzzzzzzzzzz1.m";
+    [fileContent writeToFile:savePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    if (error) {
+        printf("保存文件 %s 失败：%s\n", fileContent.UTF8String, error.localizedDescription.UTF8String);
+        abort();
+    } else {
+        NSLog(@"保存成功 ：%@",savePath);
+    }
+    
+//    fileName = [kNewClassDirName stringByAppendingString:@"CallHeader.h"];
+//    fileContent = [NSString stringWithFormat:@"%@\n%@return ret;\n}", newClassCallImportString, newClassCallFuncString];
+    
 }
 @end

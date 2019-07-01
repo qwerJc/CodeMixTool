@@ -66,7 +66,7 @@
     [self.view addSubview:btnProjPath];
     
     _txfProjPath = [[NSTextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(btnProjPath.frame) +20,CGRectGetMinY(btnProjPath.frame)-10,viewWidth - CGRectGetWidth(btnProjPath.frame) - 40, 40)];
-    [_txfProjPath setStringValue:@"输入.xcodeproj的绝对路径"];
+    [_txfProjPath setStringValue:@"/Users/jiachen/demo/demo.xcodeproj"];
     //    _txfProjPath.alignment = NSTextAlignmentCenter;
     [_txfProjPath setBezeled:NO];
     [_txfProjPath setDrawsBackground:NO];
@@ -80,7 +80,7 @@
     [self.view addSubview:btnCodePath];
     
     _txfCodePath = [[NSTextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(btnCodePath.frame) +20,CGRectGetMinY(btnCodePath.frame)-10,viewWidth - CGRectGetWidth(btnCodePath.frame) - 40, 40)];
-    [_txfCodePath setStringValue:@"选择代码文件夹的绝对路径"];
+    [_txfCodePath setStringValue:@"/Users/jiachen/demo/demo"];
     [_txfCodePath setBezeled:NO];
     [_txfCodePath setDrawsBackground:NO];
     [_txfCodePath setEditable:NO];
@@ -92,13 +92,13 @@
     [btnChoseSonPath setAction:@selector(onOpenSonPath)];
     [self.view addSubview:btnChoseSonPath];
     
-    _txfSonPath = [[NSTextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(btnCodePath.frame) +20,CGRectGetMinY(btnCodePath.frame)-10,viewWidth - CGRectGetWidth(btnCodePath.frame) - 40, 40)];
-    [_txfCodePath setStringValue:@"选择子文件夹的绝对路径"];
-    [_txfCodePath setBezeled:NO];
-    [_txfCodePath setDrawsBackground:NO];
-    [_txfCodePath setEditable:NO];
-    [_txfCodePath setSelectable:NO];
-    [self.view addSubview:_txfCodePath];
+    _txfSonPath = [[NSTextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(btnCodePath.frame) +20,CGRectGetMinY(btnChoseSonPath.frame)-10,viewWidth - CGRectGetWidth(btnCodePath.frame) - 40, 40)];
+    [_txfSonPath setStringValue:@"选择子文件夹的绝对路径"];
+    [_txfSonPath setBezeled:NO];
+    [_txfSonPath setDrawsBackground:NO];
+    [_txfSonPath setEditable:NO];
+    [_txfSonPath setSelectable:NO];
+    [self.view addSubview:_txfSonPath];
     
     // item
     for (int i =0 ; i<[_arrData count]; i++) {
