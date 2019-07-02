@@ -22,6 +22,7 @@
 @property (strong, nonatomic) NSTextField *txfProjPath;
 @property (strong, nonatomic) NSTextField *txfCodePath;
 @property (strong, nonatomic) NSTextField *txfSonPath;
+@property (strong, nonatomic) NSTextField *txfNewCodeFilePath;
 
 @property (strong, nonatomic) FileManager *fileManager;
 
@@ -100,18 +101,31 @@
     [_txfSonPath setSelectable:NO];
     [self.view addSubview:_txfSonPath];
     
-    // item
-    for (int i =0 ; i<[_arrData count]; i++) {
-        TableViewCell *cellView = [[TableViewCell alloc] initWithFrame:CGRectMake(20, MarginTop(200 - 30*i), viewWidth - 40, 20)
-                                                                andTag:i
-                                                              andTitle:_arrData[i].title
-                                                    andIsNeedParameter:_arrData[i].isNeedParameter];
+    NSButton *btnNewCodeFilePath = [[NSButton alloc] initWithFrame:CGRectMake(20, MarginTop(200), 200, 34)];
+    btnNewCodeFilePath.title = @"选择整合后的代码存放路径";
+    [btnNewCodeFilePath setAction:@selector(onOpenCodeFilePath)];
+    [self.view addSubview:btnNewCodeFilePath];
     
-        [cellView.btncheckBox setTarget:self];
-        [cellView.btncheckBox setAction:@selector(onCheckBoxAction:)];
-        cellView.btncheckBox.tag = i;
-        [self.view addSubview:cellView];
-    }
+    _txfNewCodeFilePath = [[NSTextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(btnNewCodeFilePath.frame) +20,CGRectGetMinY(btnNewCodeFilePath.frame)-10,viewWidth - CGRectGetWidth(btnNewCodeFilePath.frame) - 40, 40)];
+    [_txfNewCodeFilePath setStringValue:@"/Users/jiachen/demo/demo/SpamCode/"];
+    [_txfNewCodeFilePath setBezeled:NO];
+    [_txfNewCodeFilePath setDrawsBackground:NO];
+    [_txfNewCodeFilePath setEditable:NO];
+    [_txfNewCodeFilePath setSelectable:NO];
+    [self.view addSubview:_txfNewCodeFilePath];
+    
+//    // item
+//    for (int i =0 ; i<[_arrData count]; i++) {
+//        TableViewCell *cellView = [[TableViewCell alloc] initWithFrame:CGRectMake(20, MarginTop(200 - 30*i), viewWidth - 40, 20)
+//                                                                andTag:i
+//                                                              andTitle:_arrData[i].title
+//                                                    andIsNeedParameter:_arrData[i].isNeedParameter];
+//
+//        [cellView.btncheckBox setTarget:self];
+//        [cellView.btncheckBox setAction:@selector(onCheckBoxAction:)];
+//        cellView.btncheckBox.tag = i;
+//        [self.view addSubview:cellView];
+//    }
 
     NSButton *btnRun = [NSButton buttonWithTitle:@"Run" target:self action:@selector(onRunAction)];
     btnRun.frame = CGRectMake(50, 50, 200, 100);
@@ -120,24 +134,6 @@
 }
 
 #pragma mark - BtnAction
-- (void)try1 {
-    
-    if (_task & EnumTaskTypeAddFixClassPreName) {
-        NSLog(@"选择了 添加固定的 类名前缀");
-    }
-    
-    if (_task & EnumTaskTypeAddRandomClassPreName) {
-        NSLog(@"选择了 添加随机的 类名前缀");
-    }
-    
-    if (_task & EnumTaskTypeReplaceClassPreName) {
-        NSLog(@"选择了 替换 类前缀");
-    }
-    
-    if (_task & EnumTaskTypeDelLog) {
-        NSLog(@"选择了 删除 NSLog");
-    }
-}
 
 - (void)onCheckBoxAction:(NSButton *)btn {
     if (btn.tag & _task) {
@@ -208,14 +204,41 @@
     }
 }
 
+- (void)onOpenCodeFilePath {
+    NSOpenPanel *oPanel = [NSOpenPanel openPanel];
+    [oPanel setCanChooseDirectories:YES]; //可以打开目录
+    [oPanel setCanChooseFiles:YES]; //不能打开文件(我需要处理一个目录内的所有文件)
+    NSInteger finded = [oPanel runModal]; //获取panel的响应
+    
+    if (finded == NSModalResponseOK) {
+        NSString *newPath;
+        
+        NSString *preString = [[NSString stringWithFormat:@"%@",[oPanel URL]] substringToIndex:7];
+        if ([preString isEqualToString:@"file://"]) {
+            newPath = [[NSString stringWithFormat:@"%@",[oPanel URL]] substringFromIndex:7];
+        } else {
+            newPath = [NSString stringWithFormat:@"%@",[oPanel URL]];
+        }
+        
+        [_txfNewCodeFilePath setStringValue:newPath];
+    }
+}
+
 - (void)onRunAction {
+
     
     FileManager *fileManager = [[FileManager alloc] init];
     [fileManager setupWithXcodeProjPath:_txfProjPath.stringValue andCodeFilePath:_txfCodePath.stringValue andTask:1];
-//    [fileManager deleteUselessCodeWithLineBreak:YES andAnnotation:YES andNSLog:YES];
-//    [fileManager randomClassName];
     
-    [fileManager addSpamCode];
+    
+//    if (_txfNewCodeFilePath.stringValue.length > 0) {
+//        [fileManager setSumFileCodePath:_txfNewCodeFilePath.stringValue];
+//    }
+    [fileManager deleteUselessCode];
+//    [fileManager randomClassName];
+//    [fileManager addSpamCode];
+    
+    
     
 }
 

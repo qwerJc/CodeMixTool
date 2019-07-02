@@ -62,6 +62,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 // 获取category所拓展的文件合集
 - (void)getCategoryFileClassSet:(NSMutableString *)projectContent andSourceCodeDir:(NSString *)sourceCodeDir andIgnoreDir:(NSArray<NSString *> *)ignoreDirNames;
+
+#pragma mark - Other
+
+/** 显示提示框 */
++ (void)showAlert:(NSString *)string andDetailString:(NSString *)detailString;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -175,5 +175,8 @@ static const NSString *kRandomAlphabet = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
         _categoryFileSet = [mSet copy];
     }
 }
-
+#pragma mark - Other
++ (void)showAlert:(NSString *)string andDetailString:(NSString *)detailString {
+    NSLog(@"%@ \n %@",string, detailString);
+}
 @end

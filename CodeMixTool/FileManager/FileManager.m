@@ -10,6 +10,7 @@
 #import "FileMixedHelper.h"
 #import "MixClassNameManager.h"
 #import "SpamCodeCreateManager.h"
+#import "DeleteManager.h"
 
 @interface FileManager()
 @property (strong, nonatomic) NSString *codeFilePath;               // 代码文件的总路径
@@ -20,106 +21,48 @@
 
 @property (strong, nonatomic) NSMutableSet *categoryFileNameSet;        // category所拓展的类名
 
-@property (strong, nonatomic) MixClassNameManager *managerMixClassName;
+@property (strong, nonatomic) DeleteManager *managerDelete;             // 删除Manager
 
-@property (strong, nonatomic) SpamCodeCreateManager *managerSpamCode;
+@property (strong, nonatomic) MixClassNameManager *managerMixClassName; // 类名修改Manager
+
+@property (strong, nonatomic) SpamCodeCreateManager *managerSpamCode;   // 添加垃圾代码Manager
 @end
 
 @implementation FileManager
 
-- (void)showAlert:(NSString *)string andDetailString:(NSString *)detailString {
-    NSLog(@"%@ \n %@",string, detailString);
-}
-
 - (void)setupWithXcodeProjPath:(NSString *)projPath andCodeFilePath:(NSString *)codePath andTask:(EnumTaskType)task{
     if (!projPath ||  projPath.length <= 1) {
-        [self showAlert:@"请设置工程路径" andDetailString:nil];
+        [FileMixedHelper showAlert:@"请设置工程路径" andDetailString:@""];
         return ;
     } else {
         _projPath = [NSString stringWithFormat:@"%@/project.pbxproj",projPath];
     }
 
     if (!codePath ||  codePath.length <= 1) {
-        [self showAlert:@"请设置源码文件路径" andDetailString:nil];
+        [FileMixedHelper showAlert:@"请设置源码文件路径" andDetailString:@""];
         return ;
     } else {
         _codeFilePath = codePath;
     }
 
     if (task < 1) {
-        [self showAlert:@"请选择任务" andDetailString:nil];;
+        [FileMixedHelper showAlert:@"请选择任务" andDetailString:@""];;
         return ;
     }
 }
 
-#pragma mark - 删除无用代码
-- (void)deleteUselessCodeWithLineBreak:(BOOL)isDelLineBreak andAnnotation:(BOOL)isDelAnnotation andNSLog:(BOOL)isDelNSLog {
-    @autoreleasepool {
-        [self deleteCodeWithFilePath:_codeFilePath
-                           ignoreArr:_arrIgnoreDirNames
-                     deleteLineBreak:isDelLineBreak
-                    deleteAnnotation:isDelAnnotation
-                         deleteNSLog:isDelNSLog];
-    }
-    NSLog(@"删除完成");
+- (void)setSumFileCodePath:(NSString *)path {
+    [self.managerDelete setCodeFilePath:path];
 }
-
-/**
- 删除无用代码
- 
- @param sourceCodeDirectory 文件夹路径
- @param ignoreDirNames 忽略文件名集合
- 
- @param isDelLineBreak 是否删除换行符
- @param isDelAnnotation 是否删除注释
- @param isDelNSLog 是否删除NSLog
- */
-- (void)deleteCodeWithFilePath:(NSString *)sourceCodeDirectory
-                     ignoreArr:(NSArray<NSString *> *)ignoreDirNames
-               deleteLineBreak:(BOOL)isDelLineBreak
-              deleteAnnotation:(BOOL)isDelAnnotation
-                   deleteNSLog:(BOOL)isDelNSLog {
+#pragma mark - 删除无用代码
+- (void)deleteUselessCode {
     
-    NSFileManager *fm = [NSFileManager defaultManager];
-    NSArray<NSString *> *files = [fm contentsOfDirectoryAtPath:sourceCodeDirectory error:nil];
-    BOOL isDirectory;
-    for (NSString *fileName in files) {
-        if ([ignoreDirNames containsObject:fileName]) continue;
-        NSString *filePath = [sourceCodeDirectory stringByAppendingPathComponent:fileName];
-        if ([fm fileExistsAtPath:filePath isDirectory:&isDirectory] && isDirectory) {
-            [self deleteCodeWithFilePath:filePath
-                               ignoreArr:ignoreDirNames
-                         deleteLineBreak:isDelLineBreak
-                        deleteAnnotation:isDelAnnotation
-                             deleteNSLog:isDelNSLog];
-            continue;
-        }
-        if (![fileName hasSuffix:@".h"] && ![fileName hasSuffix:@".m"] && ![fileName hasSuffix:@".mm"] && ![fileName hasSuffix:@".swift"]) continue;
-        NSMutableString *fileContent = [NSMutableString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
-        
-        if (isDelLineBreak) {
-            [[FileMixedHelper sharedHelper] regularReplacement:fileContent regularExpression:@"/\\*{1,2}[\\s\\S]*?\\*/" newString:@""];
-            [[FileMixedHelper sharedHelper] regularReplacement:fileContent regularExpression:@"^\\s*\\n" newString:@""];
-            
-        }
-        
-        if (isDelAnnotation) {
-            [[FileMixedHelper sharedHelper] regularReplacement:fileContent regularExpression:@"([^:/])//.*" newString:@"\\1"];
-            [[FileMixedHelper sharedHelper] regularReplacement:fileContent regularExpression:@"^//.*" newString:@""]; // 删除 //
-        }
-        
-        if (isDelNSLog) {
-            // 删除NSLog
-            [[FileMixedHelper sharedHelper] regularReplacement:fileContent regularExpression:@"NSLog[(]@.*;" newString:@""];
-
-        }
-        
-        NSError *error;
-        [fileContent writeToFile:filePath atomically:YES encoding:NSUTF8StringEncoding error:&error];
-        if (error) {
-            [self showAlert:@"删除错误" andDetailString:error.localizedDescription];
-        }
-    }
+//    self.managerDelete.isDeleteLineBreak = YES;
+//    self.managerDelete.isDeleteAnnotation = YES;
+//    self.managerDelete.isDeleteNSLog = YES;
+    
+    [self.managerDelete startDeleteWithFilePath:_codeFilePath ignoreArr:_arrIgnoreDirNames];
+    NSLog(@"删除完成");
 }
 
 #pragma mark - 混淆类名
@@ -132,30 +75,21 @@
 
 #pragma mark - 添加垃圾代码
 - (void)addSpamCode {
-//    [self try];
     
     self.managerSpamCode = [[SpamCodeCreateManager alloc] init];
 
-//    [self.managerSpamCode setSpamPropertyNum:20];
     [self.managerSpamCode setSpamPropertyNum:NSMakeRange(20, 20)];
     
     [self.managerSpamCode setSpamCategoryPropertyNum:NSMakeRange(10, 10) andMethodNum:NSMakeRange(10, 10)];
     [self.managerSpamCode startMakeSpamCodeWithCodeFilePath:_codeFilePath andProjPath:_projPath];
 }
 
-- (void)try {
-    NSString *fileContent = @"xzxzzsxvc";
-    NSError *error = nil;
-    NSString *savePath = @"/Users/jiachen/demo/demo/SpamCode/FatherView+qwerJJCzzzzzzzzzzzz1.m";
-    [fileContent writeToFile:savePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
-    if (error) {
-        printf("保存文件 %s 失败：%s\n", fileContent.UTF8String, error.localizedDescription.UTF8String);
-    } else {
-        NSLog(@"保存成功 ：%@",savePath);
+
+#pragma mark - Lazy Load
+- (DeleteManager *)managerDelete {
+    if (!_managerDelete) {
+        _managerDelete = [[DeleteManager alloc] init];
     }
-    
-//    fileName = [kNewClassDirName stringByAppendingString:@"CallHeader.h"];
-//    fileContent = [NSString stringWithFormat:@"%@\n%@return ret;\n}", newClassCallImportString, newClassCallFuncString];
-    
+    return _managerDelete;
 }
 @end
