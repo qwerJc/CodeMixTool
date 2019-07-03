@@ -15,57 +15,28 @@
 @property (strong, nonatomic) SpamPropertyModel *modelPropertyCode;
 @property (strong, nonatomic) SpamCategoryModel *modelCategoryCode;
 
-@property (strong, nonatomic) NSString *categoryFileName;
-@property (strong, nonatomic) NSString *outPath;
 @end
 
 @implementation SpamCodeCreateManager
 
-#pragma mark - 设置 每个类中添加 垃圾属性的数量
-- (void)setSpamPropertyNum:(NSRange)rangePropertyNum {
-    NSRange propertyNameLength = NSMakeRange(15, 15);
+- (void)startAddSpamCode {
+    _modelPropertyCode = [[SpamPropertyModel alloc] initWithPropertyNameLength:[FileMixedHelper sharedHelper].modelSpamCode.lengthMFilePropertyName
+                                                                   PropertyNum:[FileMixedHelper sharedHelper].modelSpamCode.numMFileProperty];
     
-    _modelPropertyCode = [[SpamPropertyModel alloc] initWithPropertyNameLength:propertyNameLength
-                                                                   PropertyNum:rangePropertyNum];
-}
-
-- (void)setSpamCategoryPropertyNum:(NSRange)rangePropertyNum andMethodNum:(NSRange)rangeMethodNum {
-//    _categoryFileName = [NSString stringWithFormat:@"JJC%@",[FileMixedHelper randomString:10]];
-    _categoryFileName = @"qwerJJC";
-    
-    NSRange propertyNameLength = NSMakeRange(20, 20);
-    NSRange methodNameLength = NSMakeRange(20, 30);
-    
-    _modelCategoryCode = [[SpamCategoryModel alloc] initWithPropertyNameLength:propertyNameLength
-                                                                   PropertyNum:rangePropertyNum
-                                                               andMethodLength:methodNameLength
-                                                                  andMethodNum:rangeMethodNum];
-}
-#pragma mark - 入口方法
-- (void)startMakeSpamCodeWithCodeFilePath:(NSString *)codeFilePath andProjPath:(NSString *)projPath {
-    _outPath = [NSString stringWithFormat:@"%@/SpamCode",codeFilePath];
+    _modelCategoryCode = [[SpamCategoryModel alloc] initWithPropertyNameLength:[FileMixedHelper sharedHelper].modelSpamCode.lengthCategoryPropertyName
+                                                                   PropertyNum:[FileMixedHelper sharedHelper].modelSpamCode.numCategoryProperty
+                                                               andMethodLength:[FileMixedHelper sharedHelper].modelSpamCode.lengthCategoryMethodName
+                                                                  andMethodNum:[FileMixedHelper sharedHelper].modelSpamCode.numCategoryMethod];
     
     @autoreleasepool {
-        // 打开工程文件
-        NSError *error = nil;
-        NSMutableString *projectContent = [NSMutableString stringWithContentsOfFile:projPath encoding:NSUTF8StringEncoding error:&error];
-        if (error) {
-            printf("JJC-打开工程文件 %s 失败：%s\n", projPath.UTF8String, error.localizedDescription.UTF8String);
-            return ;
-        }
-        
-        // 遍历全部文件,获取category文件
-        [[FileMixedHelper sharedHelper] getCategoryFileClassSet:projectContent
-                                               andSourceCodeDir:codeFilePath
-                                                   andIgnoreDir:nil];
         
         // 遍历全部文件，准备添加垃圾代码
-        [self traverseAllFileWithProjectContent:projectContent andCodeFilePath:codeFilePath];
+        [self addSpamCodeWithSourceCodeFilePath:[FileMixedHelper sharedHelper].sourceCodePath];
     }
 }
 
 // 遍历全部文件
-- (void)traverseAllFileWithProjectContent:(NSMutableString *)projectContent andCodeFilePath:(NSString *)sourceCodeDir {
+- (void)addSpamCodeWithSourceCodeFilePath:(NSString *)sourceCodeDir {
     NSFileManager *fm = [NSFileManager defaultManager];
     
     // 遍历源代码文件 h 与 m 配对，swift
@@ -82,7 +53,7 @@
         // fileExistsAtPath 判断当前路径下是否为路径，若isDirectory为Yes则是路径
         if ([fm fileExistsAtPath:path isDirectory:&isDirectory] && isDirectory) {
             if (![path containsString:@"/assets/images"]) {
-                [self traverseAllFileWithProjectContent:projectContent andCodeFilePath:path];
+                [self addSpamCodeWithSourceCodeFilePath:path];
             } else {
                 NSLog(@"忽略");
             }
@@ -98,7 +69,10 @@
             // 在.m文件中 添加 垃圾代码
             [self addSpamCodeInMFileWithClassName:fileName andSourceCodePath:sourceCodeDir];
             
-            [self addSpamCategoryFileWithClassName:fileName andSourceCodeDir:sourceCodeDir];
+            NSLog(@"%@",[FileMixedHelper sharedHelper].spamCodePath);
+            if ([FileMixedHelper sharedHelper].spamCodePath.length > 0) {
+                [self addSpamCategoryFileWithClassName:fileName andSourceCodeDir:sourceCodeDir];
+            }
         }
     }
 }
@@ -115,10 +89,10 @@
     NSString *newMFileContent = [mFileContent copy];
     
     // 如果当前category文件不为空 则需要添加category文件的import
-    if (_modelCategoryCode) {
+    if (_modelCategoryCode && [FileMixedHelper sharedHelper].spamCodePath.length > 0) {
         newMFileContent = [self addCategoryImportWithMFileContent:newMFileContent
                                                      andClassName:className
-                                                  andCategoryName:_categoryFileName];
+                                                  andCategoryName:[FileMixedHelper sharedHelper].modelSpamCode.categoryName];
     }
     
     if (_modelPropertyCode) {
@@ -157,14 +131,14 @@
 - (void)addSpamCategoryFileWithClassName:(NSString *)className andSourceCodeDir:(NSString *)sourceCodeDir {
     
     // 创建.h文件
-    NSMutableString *hFileContent = [NSMutableString stringWithFormat:@"\n#import \"%@.h\"\n\n@interface %@ (%@)\n%@\n%@\n@end",className,className,_categoryFileName,_modelCategoryCode.propertyCode,_modelCategoryCode.hMethodCode];
+    NSMutableString *hFileContent = [NSMutableString stringWithFormat:@"\n#import \"%@.h\"\n\n@interface %@ (%@)\n%@\n%@\n@end",className,className,[FileMixedHelper sharedHelper].modelSpamCode.categoryName,_modelCategoryCode.propertyCode,_modelCategoryCode.hMethodCode];
     
-    NSMutableString *mFileContent = [NSMutableString stringWithFormat:@"\n#import \"%@+%@.h\"\n\n@implementation %@ (%@)\n%@\n%@\n@end",className,_categoryFileName,className,_categoryFileName,_modelCategoryCode.mMethodCode,_modelCategoryCode.callMethodCode];
+    NSMutableString *mFileContent = [NSMutableString stringWithFormat:@"\n#import \"%@+%@.h\"\n\n@implementation %@ (%@)\n%@\n%@\n@end",className,[FileMixedHelper sharedHelper].modelSpamCode.categoryName,className,[FileMixedHelper sharedHelper].modelSpamCode.categoryName,_modelCategoryCode.mMethodCode,_modelCategoryCode.callMethodCode];
     
     
     if (hFileContent.length > 0) {
         NSError *error = nil;
-        NSString *savePath = [NSString stringWithFormat:@"%@/%@+%@.h",_outPath,className,_categoryFileName];
+        NSString *savePath = [NSString stringWithFormat:@"%@%@+%@.h",[FileMixedHelper sharedHelper].spamCodePath,className,[FileMixedHelper sharedHelper].modelSpamCode.categoryName];
         [hFileContent writeToFile:savePath atomically:YES encoding:NSUTF8StringEncoding error:&error];
         if (error) {
             NSLog(@"hFileConten 保存文件 失败：%@\n",error.localizedDescription);
@@ -175,7 +149,7 @@
     
     if (mFileContent.length > 0) {
         NSError *error = nil;
-        NSString *savePath = [NSString stringWithFormat:@"%@/%@+%@.m",_outPath,className,_categoryFileName];
+        NSString *savePath = [NSString stringWithFormat:@"%@/%@+%@.m",[FileMixedHelper sharedHelper].spamCodePath,className,[FileMixedHelper sharedHelper].modelSpamCode.categoryName];
         [mFileContent writeToFile:savePath atomically:YES encoding:NSUTF8StringEncoding error:&error];
         if (error) {
             printf("mFileContent 保存文件 %s 失败：%s\n", sourceCodeDir.UTF8String, error.localizedDescription.UTF8String);
@@ -199,7 +173,7 @@
         NSString *interfaceContent = [mFileContent substringWithRange:range];
         if ([interfaceContent hasSuffix:@"@end"] ) {
             
-            NSString *newInterfaceContent = [NSString stringWithFormat:@"%@%@\n@end",[interfaceContent substringToIndex:interfaceContent.length-4],_modelPropertyCode.propertyCode];
+            NSString *newInterfaceContent = [NSString stringWithFormat:@"\n\n%@%@\n@end",[interfaceContent substringToIndex:interfaceContent.length-4],_modelPropertyCode.propertyCode];
             // = [interfaceContent stringByReplacingOccurrencesOfString:@"@end" withString:newPropertyCode];
             
             NSString *newMFileContent = [mFileContent stringByReplacingOccurrencesOfString:interfaceContent withString:newInterfaceContent];
@@ -250,6 +224,11 @@
                 
                 NSString *newImplementationContent = [implementationContent stringByReplacingOccurrencesOfString:@"@end" withString:newCallMethod];
                 
+                NSString *newMFileContent = [mFileContent stringByReplacingOccurrencesOfString:implementationContent withString:newImplementationContent];
+                return newMFileContent;
+            } else {
+                NSString *newInitMethod = [NSString stringWithFormat:@"- (void)jjc_callAllAddProperty { \n%@ ",_modelPropertyCode.callMethodCode];
+                NSString *newImplementationContent = [implementationContent stringByReplacingOccurrencesOfString:@"- (void)jjc_callAllAddProperty {" withString:newInitMethod];
                 NSString *newMFileContent = [mFileContent stringByReplacingOccurrencesOfString:implementationContent withString:newImplementationContent];
                 return newMFileContent;
             }

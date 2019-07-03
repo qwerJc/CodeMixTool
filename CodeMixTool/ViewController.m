@@ -9,6 +9,7 @@
 #define MarginTop(originY) WindowHeight - originY
 
 #import "ViewController.h"
+#import "FileMixedHelper.h"
 #import "TableViewCell.h"
 #import "FunctionModel.h"
 #import "FileManager.h"
@@ -22,6 +23,7 @@
 @property (strong, nonatomic) NSTextField *txfProjPath;
 @property (strong, nonatomic) NSTextField *txfCodePath;
 @property (strong, nonatomic) NSTextField *txfSonPath;
+@property (strong, nonatomic) NSTextField *txfSpamCodePath;
 @property (strong, nonatomic) NSTextField *txfNewCodeFilePath;
 
 @property (strong, nonatomic) FileManager *fileManager;
@@ -54,6 +56,9 @@
     [_arrData addObject:data2];
     [_arrData addObject:data3];
     [_arrData addObject:data4];
+    
+    [FileMixedHelper sharedHelper].projPath = @"/Users/jiachen/demo/demo.xcodeproj";
+    [FileMixedHelper sharedHelper].sourceCodePath = @"/Users/jiachen/demo/demo";
 }
 
 - (void)createUI {
@@ -63,7 +68,7 @@
     
     NSButton *btnProjPath = [[NSButton alloc] initWithFrame:CGRectMake(20, MarginTop(50), 200, 34)];
     btnProjPath.title = @"选择.xcodeproj文件";
-    [btnProjPath setAction:@selector(onOpen)];
+    [btnProjPath setAction:@selector(onOpenXcodeproj)];
     [self.view addSubview:btnProjPath];
     
     _txfProjPath = [[NSTextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(btnProjPath.frame) +20,CGRectGetMinY(btnProjPath.frame)-10,viewWidth - CGRectGetWidth(btnProjPath.frame) - 40, 40)];
@@ -101,32 +106,32 @@
     [_txfSonPath setSelectable:NO];
     [self.view addSubview:_txfSonPath];
     
-    NSButton *btnNewCodeFilePath = [[NSButton alloc] initWithFrame:CGRectMake(20, MarginTop(200), 200, 34)];
+    NSButton *btnSpamCodeFilePath = [[NSButton alloc] initWithFrame:CGRectMake(20, MarginTop(200), 200, 34)];
+    btnSpamCodeFilePath.title = @"选择垃圾代码存放路径";
+    [btnSpamCodeFilePath setAction:@selector(onOpenSpamCodeFilePath)];
+    [self.view addSubview:btnSpamCodeFilePath];
+    
+    _txfSpamCodePath = [[NSTextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(btnSpamCodeFilePath.frame) +20,CGRectGetMinY(btnSpamCodeFilePath.frame)-10,viewWidth - CGRectGetWidth(btnSpamCodeFilePath.frame) - 40, 40)];
+    [_txfSpamCodePath setStringValue:@""];
+    [_txfSpamCodePath setBezeled:NO];
+    [_txfSpamCodePath setDrawsBackground:NO];
+    [_txfSpamCodePath setEditable:NO];
+    [_txfSpamCodePath setSelectable:NO];
+    [self.view addSubview:_txfSpamCodePath];
+    
+    NSButton *btnNewCodeFilePath = [[NSButton alloc] initWithFrame:CGRectMake(20, MarginTop(250), 200, 34)];
     btnNewCodeFilePath.title = @"选择整合后的代码存放路径";
-    [btnNewCodeFilePath setAction:@selector(onOpenCodeFilePath)];
+    [btnNewCodeFilePath setAction:@selector(onSetModifySavePath)];
     [self.view addSubview:btnNewCodeFilePath];
     
     _txfNewCodeFilePath = [[NSTextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(btnNewCodeFilePath.frame) +20,CGRectGetMinY(btnNewCodeFilePath.frame)-10,viewWidth - CGRectGetWidth(btnNewCodeFilePath.frame) - 40, 40)];
-    [_txfNewCodeFilePath setStringValue:@"/Users/jiachen/demo/demo/SpamCode/"];
+    [_txfNewCodeFilePath setStringValue:@""];
     [_txfNewCodeFilePath setBezeled:NO];
     [_txfNewCodeFilePath setDrawsBackground:NO];
     [_txfNewCodeFilePath setEditable:NO];
     [_txfNewCodeFilePath setSelectable:NO];
     [self.view addSubview:_txfNewCodeFilePath];
     
-//    // item
-//    for (int i =0 ; i<[_arrData count]; i++) {
-//        TableViewCell *cellView = [[TableViewCell alloc] initWithFrame:CGRectMake(20, MarginTop(200 - 30*i), viewWidth - 40, 20)
-//                                                                andTag:i
-//                                                              andTitle:_arrData[i].title
-//                                                    andIsNeedParameter:_arrData[i].isNeedParameter];
-//
-//        [cellView.btncheckBox setTarget:self];
-//        [cellView.btncheckBox setAction:@selector(onCheckBoxAction:)];
-//        cellView.btncheckBox.tag = i;
-//        [self.view addSubview:cellView];
-//    }
-
     NSButton *btnRun = [NSButton buttonWithTitle:@"Run" target:self action:@selector(onRunAction)];
     btnRun.frame = CGRectMake(50, 50, 200, 100);
     [self.view addSubview:btnRun];
@@ -135,14 +140,7 @@
 
 #pragma mark - BtnAction
 
-- (void)onCheckBoxAction:(NSButton *)btn {
-    if (btn.tag & _task) {
-        
-    }
-    NSLog(@"click:zz,%ld",(long)btn.tag);
-}
-
-- (void)onOpen {
+- (void)onOpenXcodeproj {
     NSOpenPanel *oPanel = [NSOpenPanel openPanel];
     [oPanel setCanChooseDirectories:YES]; //可以打开目录
     [oPanel setCanChooseFiles:YES]; //不能打开文件(我需要处理一个目录内的所有文件)
@@ -159,6 +157,8 @@
         }
         NSLog(@"选择路径：%@",newPath);
         [_txfProjPath setStringValue:newPath];
+        
+        [FileMixedHelper sharedHelper].projPath = newPath;
     }
 }
 
@@ -187,10 +187,13 @@
         NSLog(@"选择路径：%@",newPath);
         [_txfCodePath setStringValue:newPath];
         
+        [FileMixedHelper sharedHelper].sourceCodePath = newPath;
     }
 }
 
 - (void)onOpenSonPath {
+    NSMutableArray *arrSonPath = [NSMutableArray arrayWithCapacity:0];
+    
     NSOpenPanel *oPanel = [NSOpenPanel openPanel];
     [oPanel setCanChooseDirectories:YES]; //可以打开目录
     [oPanel setCanChooseFiles:YES]; //不能打开文件(我需要处理一个目录内的所有文件)
@@ -198,16 +201,27 @@
     NSInteger finded = [oPanel runModal]; //获取panel的响应
     
     if (finded == NSModalResponseOK) {
-        NSArray *arrSonPath = [oPanel URLs];
-        NSLog(@"选择子路径：%@",arrSonPath);
-        [_txfCodePath setStringValue:[NSString stringWithFormat:@"%@",[oPanel URL]]];
+        for (NSURL *pathURL in [oPanel URLs]) {
+            
+            NSString *path = [NSString stringWithFormat:@"%@",pathURL];
+            if ([path hasPrefix:@"file://"]) {
+                [arrSonPath addObject:[path substringFromIndex:7]];
+            } else {
+                [arrSonPath addObject:path];
+            }
+        }
+        
+        [_txfSonPath setStringValue:[NSString stringWithFormat:@"%@",[oPanel URL]]];
+        
+        [FileMixedHelper sharedHelper].arrSonPath = [arrSonPath copy];
     }
 }
 
-- (void)onOpenCodeFilePath {
+- (void)onOpenSpamCodeFilePath {
     NSOpenPanel *oPanel = [NSOpenPanel openPanel];
     [oPanel setCanChooseDirectories:YES]; //可以打开目录
-    [oPanel setCanChooseFiles:YES]; //不能打开文件(我需要处理一个目录内的所有文件)
+    [oPanel setCanChooseFiles:NO]; //不能打开文件(我需要处理一个目录内的所有文件)
+    [oPanel setCanCreateDirectories:YES];
     NSInteger finded = [oPanel runModal]; //获取panel的响应
     
     if (finded == NSModalResponseOK) {
@@ -220,26 +234,56 @@
             newPath = [NSString stringWithFormat:@"%@",[oPanel URL]];
         }
         
+        if (![FileMixedHelper isFolderEmpryWithPath:newPath]) {
+            [FileMixedHelper showAlert:@"选择错误" andDetailString:@"请选择一个空文件夹"];
+            [self onOpenSpamCodeFilePath];
+        }
+        
+        [_txfSpamCodePath setStringValue:newPath];
+        
+        [FileMixedHelper sharedHelper].spamCodePath = newPath;
+    }
+}
+
+- (void)onSetModifySavePath {
+    NSOpenPanel *oPanel = [NSOpenPanel openPanel];
+    [oPanel setCanChooseDirectories:YES]; //可以打开目录
+    [oPanel setCanChooseFiles:YES]; //不能打开文件(我需要处理一个目录内的所有文件)
+    [oPanel setCanCreateDirectories:YES];
+    NSInteger finded = [oPanel runModal]; //获取panel的响应
+    
+    if (finded == NSModalResponseOK) {
+        NSString *newPath;
+        
+        NSString *preString = [[NSString stringWithFormat:@"%@",[oPanel URL]] substringToIndex:7];
+        if ([preString isEqualToString:@"file://"]) {
+            newPath = [[NSString stringWithFormat:@"%@",[oPanel URL]] substringFromIndex:7];
+        } else {
+            newPath = [NSString stringWithFormat:@"%@",[oPanel URL]];
+        }
+        
+        if (![FileMixedHelper isFolderEmpryWithPath:newPath]) {
+            [FileMixedHelper showAlert:@"选择错误" andDetailString:@"请选择一个空文件夹"];
+            [self onSetModifySavePath];
+        }
+        
         [_txfNewCodeFilePath setStringValue:newPath];
+        [FileMixedHelper sharedHelper].modifyFileSavePath = newPath;
     }
 }
 
 - (void)onRunAction {
-
+    
+    NSLog(@"=========================");
+    [[FileMixedHelper sharedHelper] getAllCategoryFileClassNameWithSourceCodeDir:[FileMixedHelper sharedHelper].sourceCodePath];
+    NSLog(@"输出所有category 文件：%@",[FileMixedHelper sharedHelper].categoryFileSet);
+    NSLog(@"=========================");
     
     FileManager *fileManager = [[FileManager alloc] init];
-    [fileManager setupWithXcodeProjPath:_txfProjPath.stringValue andCodeFilePath:_txfCodePath.stringValue andTask:1];
     
-    
-//    if (_txfNewCodeFilePath.stringValue.length > 0) {
-//        [fileManager setSumFileCodePath:_txfNewCodeFilePath.stringValue];
-//    }
     [fileManager deleteUselessCode];
-//    [fileManager randomClassName];
-//    [fileManager addSpamCode];
-    
-    
-    
+    [fileManager randomClassName];
+    [fileManager addSpamCodeWithOutPath:_txfSpamCodePath.stringValue];
 }
 
 - (void)setRepresentedObject:(id)representedObject {

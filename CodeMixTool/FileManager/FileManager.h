@@ -13,16 +13,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FileManager : NSObject
 
-- (void)setupWithXcodeProjPath:(NSString *)projPath andCodeFilePath:(NSString *)codePath andTask:(EnumTaskType)task;
-
 #pragma mark - 删除
 - (void)deleteUselessCode;
-- (void)setSumFileCodePath:(NSString *)path;
 #pragma mark - 混淆类名
 - (void)randomClassName;
 
 #pragma mark - 添加垃圾代码
-- (void)addSpamCode;
+- (void)addSpamCodeWithOutPath:(NSString *)outPath;
 @end
 
 NS_ASSUME_NONNULL_END

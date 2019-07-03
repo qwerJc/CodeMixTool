@@ -10,82 +10,52 @@
 #import "FileMixedHelper.h"
 
 @interface MixClassNameManager ()
-
-@property (assign, nonatomic) NSRange randomClassNameRange; // 是否使用随机类名
-
-@property (strong, nonatomic) NSString *preName;
-@property (assign, nonatomic) NSRange preNameLengthRange;
-
-@property (strong, nonatomic) NSString *infixName;
-@property (assign, nonatomic) NSRange infixNameLengthRange;
-
-@property (strong, nonatomic) NSString *suffixName;
-@property (assign, nonatomic) NSRange suffixNameLengthRange;
+//
+//@property (assign, nonatomic) NSRange randomClassNameRange; // 是否使用随机类名
+//
+//@property (strong, nonatomic) NSString *preName;
+//@property (assign, nonatomic) NSRange preNameLengthRange;
+//
+//@property (strong, nonatomic) NSString *infixName;
+//@property (assign, nonatomic) NSRange infixNameLengthRange;
+//
+//@property (strong, nonatomic) NSString *suffixName;
+//@property (assign, nonatomic) NSRange suffixNameLengthRange;
 @end
 
 @implementation MixClassNameManager
-#pragma mark - 修改随机类名
-- (void)setRandomClassNameWithLengthRange:(NSRange)range {
-    _randomClassNameRange = range;
-}
-#pragma mark - 添加类名 前缀
-- (void)addFixClassPreName:(NSString *)preName {
-    _preName = preName;
-}
 
-- (void)addRandomClassPreNameWithLengthRange:(NSRange)range {
-    _preNameLengthRange = range;
-}
-
-#pragma mark - 添加类名 中缀
-- (void)addFixClassInfixName:(NSString *)infixName {
-    _infixName = infixName;
-}
-
-- (void)addRandomClassInfixNameWithLengthRange:(NSRange)range {
-    _infixNameLengthRange = range;
-}
-
-#pragma mark - 添加类名 后缀
-- (void)addFixClassSuffixName:(NSString *)suffixName {
-    _suffixName = suffixName;
-}
-
-- (void)addRandomClassSuffixNameWithLengthRange:(NSRange)range {
-    _suffixNameLengthRange = range;
-}
 
 #pragma mark - 开始混淆
-- (void)startMixedWithCodeFilePath:(NSString *)codeFilePath andProjPath:(NSString *)projPath {
+- (void)startMixed {
     @autoreleasepool {
         // 打开工程文件
         NSError *error = nil;
-        NSMutableString *projectContent = [NSMutableString stringWithContentsOfFile:projPath encoding:NSUTF8StringEncoding error:&error];
+        
+        NSString *projContentPath = [NSString stringWithFormat:@"%@/project.pbxproj",[FileMixedHelper sharedHelper].projPath];
+        
+        NSMutableString *projectContent = [NSMutableString stringWithContentsOfFile:projContentPath
+                                                                           encoding:NSUTF8StringEncoding
+                                                                              error:&error];
         if (error) {
-            printf("JJC-打开工程文件 %s 失败：%s\n", projPath.UTF8String, error.localizedDescription.UTF8String);
+            NSLog(@"打开工程文件 失败,%@",error.description);
             return ;
         }
         
-        NSLog(@"=========================");
-        [[FileMixedHelper sharedHelper] getCategoryFileClassSet:projectContent
-                                               andSourceCodeDir:codeFilePath
-                                                   andIgnoreDir:nil];
-        NSLog(@"输出所有category 文件：%@",[FileMixedHelper sharedHelper].categoryFileSet);
-        NSLog(@"=========================");
+        [self changeRandomClassNameWithXCProjContent:projectContent
+                                     andCodeFilePath:[FileMixedHelper sharedHelper].sourceCodePath];
         
-        [self changeRandomClassNameWithProjPath:projectContent andCodeFilePath:codeFilePath];
-        
-        [projectContent writeToFile:projPath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        [projectContent writeToFile:projContentPath atomically:YES encoding:NSUTF8StringEncoding error:nil];
     }
 }
 
 #pragma mark - Private
-- (void)changeRandomClassNameWithProjPath:(NSMutableString *)projectContent andCodeFilePath:(NSString *)sourceCodeDir {
+- (void)changeRandomClassNameWithXCProjContent:(NSMutableString *)projectContent andCodeFilePath:(NSString *)pathCodeFile {
 
     NSFileManager *fm = [NSFileManager defaultManager];
     
     // 遍历源代码文件 h 与 m 配对，swift
-    NSArray<NSString *> *files = [fm contentsOfDirectoryAtPath:sourceCodeDir error:nil];
+    NSArray<NSString *> *files = [fm contentsOfDirectoryAtPath:pathCodeFile error:nil];
     
     if (!files) {
         NSLog(@"JJC错误：该路径下没有文件，请检查sonPath设置是否正确");
@@ -93,12 +63,12 @@
     
     BOOL isDirectory;
     for (NSString *filePath in files) {
-        NSString *path = [sourceCodeDir stringByAppendingPathComponent:filePath];
+        NSString *path = [pathCodeFile stringByAppendingPathComponent:filePath];
         
         // fileExistsAtPath 判断当前路径下是否为路径，若isDirectory为Yes则是路径
         if ([fm fileExistsAtPath:path isDirectory:&isDirectory] && isDirectory) {
             if (![path containsString:@"/assets/images"]) {
-                [self changeRandomClassNameWithProjPath:projectContent andCodeFilePath:path];
+                [self changeRandomClassNameWithXCProjContent:projectContent andCodeFilePath:path];
             } else {
                 NSLog(@"忽略");
             }
@@ -121,24 +91,24 @@
                 if ([files containsObject:mFileName]) {
                     NSLog(@"fileName : %@ -> %@",fileName,newClassName);
                     
-                    NSString *oldFilePath = [[sourceCodeDir stringByAppendingPathComponent:fileName] stringByAppendingPathExtension:@"h"];
-                    NSString *newFilePath = [[sourceCodeDir stringByAppendingPathComponent:newClassName] stringByAppendingPathExtension:@"h"];
+                    NSString *oldFilePath = [[pathCodeFile stringByAppendingPathComponent:fileName] stringByAppendingPathExtension:@"h"];
+                    NSString *newFilePath = [[pathCodeFile stringByAppendingPathComponent:newClassName] stringByAppendingPathExtension:@"h"];
                     [[FileMixedHelper sharedHelper] resaveFileWithOldFilePath:oldFilePath andNewFilePath:newFilePath];
                     
-                    oldFilePath = [[sourceCodeDir stringByAppendingPathComponent:fileName] stringByAppendingPathExtension:@"m"];
-                    newFilePath = [[sourceCodeDir stringByAppendingPathComponent:newClassName] stringByAppendingPathExtension:@"m"];
+                    oldFilePath = [[pathCodeFile stringByAppendingPathComponent:fileName] stringByAppendingPathExtension:@"m"];
+                    newFilePath = [[pathCodeFile stringByAppendingPathComponent:newClassName] stringByAppendingPathExtension:@"m"];
                     [[FileMixedHelper sharedHelper] resaveFileWithOldFilePath:oldFilePath andNewFilePath:newFilePath];
                     
-                    oldFilePath = [[sourceCodeDir stringByAppendingPathComponent:fileName] stringByAppendingPathExtension:@"xib"];
+                    oldFilePath = [[pathCodeFile stringByAppendingPathComponent:fileName] stringByAppendingPathExtension:@"xib"];
                     
                     if ([fm fileExistsAtPath:oldFilePath]) {
-                        newFilePath = [[sourceCodeDir stringByAppendingPathComponent:newClassName] stringByAppendingPathExtension:@"xib"];
+                        newFilePath = [[pathCodeFile stringByAppendingPathComponent:newClassName] stringByAppendingPathExtension:@"xib"];
                         [[FileMixedHelper sharedHelper] resaveFileWithOldFilePath:oldFilePath andNewFilePath:newFilePath];
                     }
                     
                     // 遍历所有工程文件，替换类名
                     @autoreleasepool {
-                        [[FileMixedHelper sharedHelper] modifyFilesClassNameWithSourceCodeDir:sourceCodeDir
+                        [[FileMixedHelper sharedHelper] modifyFilesClassNameWithSourceCodeDir:[FileMixedHelper sharedHelper].sourceCodePath
                                                                               andOldClassName:fileName
                                                                               andNewClassName:newClassName];
                     }
@@ -160,31 +130,31 @@
 }
 
 - (NSString *)getNewClassNameWithOldClassName:(NSString *)oldClassName {
-    // 如果当前需要混淆固定类名
-    if (_randomClassNameRange.location>0 || _randomClassNameRange.length>0) {
-        NSUInteger length = arc4random_uniform((uint32_t)_randomClassNameRange.length) + _randomClassNameRange.location;
+    // 如果当前需要混淆 随机类名
+    if ([FileMixedHelper sharedHelper].modelMixed.lengthRandomClassName.location>0 || [FileMixedHelper sharedHelper].modelMixed.lengthRandomClassName.length>0) {
+        NSUInteger length = arc4random_uniform((uint32_t)[FileMixedHelper sharedHelper].modelMixed.lengthRandomClassName.length) + [FileMixedHelper sharedHelper].modelMixed.lengthRandomClassName.location;
         return [FileMixedHelper randomString:length];
     } else {
         NSString *newClassName;
         // 如果存在 固定前缀/随机前缀
-        if (_preName) {
-            newClassName = _preName;
-        } else if (_preNameLengthRange.location>0 || _preNameLengthRange.length>0) {
-            NSUInteger length = arc4random_uniform((uint32_t)_preNameLengthRange.length) + _preNameLengthRange.location;
+        if ([FileMixedHelper sharedHelper].modelMixed.preName) {
+            newClassName = [FileMixedHelper sharedHelper].modelMixed.preName;
+        } else if ([FileMixedHelper sharedHelper].modelMixed.lengthPreName.location>0 || [FileMixedHelper sharedHelper].modelMixed.lengthPreName.length>0) {
+            NSUInteger length = arc4random_uniform((uint32_t)[FileMixedHelper sharedHelper].modelMixed.lengthPreName.length) + [FileMixedHelper sharedHelper].modelMixed.lengthPreName.location;
             newClassName = [FileMixedHelper randomString:length];
         }
         
         // 如果存在 固定中缀/随机中缀
-        if (_infixName) {
+        if ([FileMixedHelper sharedHelper].modelMixed.infixName) {
             if (oldClassName.length > 1) {
                 NSUInteger index = oldClassName.length/2;
                 newClassName = [[[newClassName stringByAppendingString:[oldClassName substringToIndex:index]]
-                                               stringByAppendingString:_infixName]
+                                               stringByAppendingString:[FileMixedHelper sharedHelper].modelMixed.infixName]
                                                stringByAppendingString:[oldClassName substringFromIndex:index]];
             }
-        } else if (_infixNameLengthRange.location>0 || _infixNameLengthRange.length>0) {
+        } else if ([FileMixedHelper sharedHelper].modelMixed.lengthInfixName.location>0 || [FileMixedHelper sharedHelper].modelMixed.lengthInfixName.length>0) {
             if (oldClassName.length > 1) {
-                NSUInteger length = arc4random_uniform((uint32_t)_infixNameLengthRange.length) + _infixNameLengthRange.location;
+                NSUInteger length = arc4random_uniform((uint32_t)[FileMixedHelper sharedHelper].modelMixed.lengthInfixName.length) + [FileMixedHelper sharedHelper].modelMixed.lengthInfixName.location;
                 NSString *randomString = [FileMixedHelper randomString:length];
                 
                 NSUInteger index = oldClassName.length/2;
@@ -195,10 +165,11 @@
         }
         
         // 如果存在 固定后缀/随机后缀
-        if (_suffixName) {
-            newClassName = [newClassName stringByAppendingString:_suffixName];
-        } else if (_suffixNameLengthRange.location>0 || _suffixNameLengthRange.length>0) {
-            NSUInteger length = arc4random_uniform((uint32_t)_suffixNameLengthRange.length) + _suffixNameLengthRange.location;
+        if ([FileMixedHelper sharedHelper].modelMixed.suffixName) {
+            newClassName = [newClassName stringByAppendingString:[FileMixedHelper sharedHelper].modelMixed.suffixName];
+            
+        } else if ([FileMixedHelper sharedHelper].modelMixed.lengthSuffixName.location>0 || [FileMixedHelper sharedHelper].modelMixed.lengthSuffixName.length>0) {
+            NSUInteger length = arc4random_uniform((uint32_t)[FileMixedHelper sharedHelper].modelMixed.lengthSuffixName.length) + [FileMixedHelper sharedHelper].modelMixed.lengthSuffixName.location;
             NSString *randomString = [FileMixedHelper randomString:length];
             newClassName = [newClassName stringByAppendingString:randomString];
         }

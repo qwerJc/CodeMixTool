@@ -13,13 +13,6 @@
 #import "DeleteManager.h"
 
 @interface FileManager()
-@property (strong, nonatomic) NSString *codeFilePath;               // 代码文件的总路径
-@property (strong, nonatomic) NSString *projPath;                   // 工程路径(.xcodeproj路径)
-@property (strong, nonatomic) NSString *sonPath;                    // 子文件夹的路径
-
-@property (strong, nonatomic) NSArray<NSString *> *arrIgnoreDirNames;   // 忽略文件夹名 数组
-
-@property (strong, nonatomic) NSMutableSet *categoryFileNameSet;        // category所拓展的类名
 
 @property (strong, nonatomic) DeleteManager *managerDelete;             // 删除Manager
 
@@ -30,58 +23,44 @@
 
 @implementation FileManager
 
-- (void)setupWithXcodeProjPath:(NSString *)projPath andCodeFilePath:(NSString *)codePath andTask:(EnumTaskType)task{
-    if (!projPath ||  projPath.length <= 1) {
-        [FileMixedHelper showAlert:@"请设置工程路径" andDetailString:@""];
-        return ;
-    } else {
-        _projPath = [NSString stringWithFormat:@"%@/project.pbxproj",projPath];
-    }
 
-    if (!codePath ||  codePath.length <= 1) {
-        [FileMixedHelper showAlert:@"请设置源码文件路径" andDetailString:@""];
-        return ;
-    } else {
-        _codeFilePath = codePath;
-    }
-
-    if (task < 1) {
-        [FileMixedHelper showAlert:@"请选择任务" andDetailString:@""];;
-        return ;
-    }
-}
-
-- (void)setSumFileCodePath:(NSString *)path {
-    [self.managerDelete setCodeFilePath:path];
-}
 #pragma mark - 删除无用代码
 - (void)deleteUselessCode {
     
-//    self.managerDelete.isDeleteLineBreak = YES;
-//    self.managerDelete.isDeleteAnnotation = YES;
-//    self.managerDelete.isDeleteNSLog = YES;
+    [FileMixedHelper sharedHelper].modelDelete.isDeleteLineBreak = YES;
+    [FileMixedHelper sharedHelper].modelDelete.isDeleteAnnotation = YES;
+    [FileMixedHelper sharedHelper].modelDelete.isDeleteNSLog = YES;
     
-    [self.managerDelete startDeleteWithFilePath:_codeFilePath ignoreArr:_arrIgnoreDirNames];
+    [self.managerDelete startDelete];
     NSLog(@"删除完成");
 }
 
 #pragma mark - 混淆类名
 - (void)randomClassName {
+    [FileMixedHelper sharedHelper].modelMixed.lengthRandomClassName = NSMakeRange(10, 10);
+    
     self.managerMixClassName = [[MixClassNameManager alloc] init];
     
-    [self.managerMixClassName setRandomClassNameWithLengthRange:NSMakeRange(8, 15)];
-    [self.managerMixClassName startMixedWithCodeFilePath:_codeFilePath andProjPath:_projPath];
+    [self.managerMixClassName startMixed];
 }
 
 #pragma mark - 添加垃圾代码
-- (void)addSpamCode {
+- (void)addSpamCodeWithOutPath:(NSString *)outPath {
+    [FileMixedHelper sharedHelper].modelSpamCode.categoryName = @"qwerJJC";
+    [FileMixedHelper sharedHelper].modelSpamCode.numMFileProperty = NSMakeRange(20, 20);
+    [FileMixedHelper sharedHelper].modelSpamCode.lengthMFilePropertyName = NSMakeRange(10, 20);
+    
+    [FileMixedHelper sharedHelper].modelSpamCode.numCategoryProperty = NSMakeRange(20, 25);
+    [FileMixedHelper sharedHelper].modelSpamCode.lengthCategoryPropertyName = NSMakeRange(10, 20);
+    
+    [FileMixedHelper sharedHelper].modelSpamCode.numCategoryProperty = NSMakeRange(20, 25);
+    [FileMixedHelper sharedHelper].modelSpamCode.lengthCategoryPropertyName = NSMakeRange(10, 20);
+    
+    [FileMixedHelper sharedHelper].modelSpamCode.numCategoryMethod = NSMakeRange(20, 20);
+    [FileMixedHelper sharedHelper].modelSpamCode.lengthCategoryMethodName = NSMakeRange(15, 25);
     
     self.managerSpamCode = [[SpamCodeCreateManager alloc] init];
-
-    [self.managerSpamCode setSpamPropertyNum:NSMakeRange(20, 20)];
-    
-    [self.managerSpamCode setSpamCategoryPropertyNum:NSMakeRange(10, 10) andMethodNum:NSMakeRange(10, 10)];
-    [self.managerSpamCode startMakeSpamCodeWithCodeFilePath:_codeFilePath andProjPath:_projPath];
+    [self.managerSpamCode startAddSpamCode];
 }
 
 

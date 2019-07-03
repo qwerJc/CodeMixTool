@@ -10,6 +10,18 @@
 
 static const NSString *kRandomAlphabet = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
+@implementation DeleteFunctionModel
+- (NSString *)description {
+    return [NSString stringWithFormat:@"\nisDeleteLineBreak: %d \nisDeleteAnnotation: %d \nisDeleteNSLog: %d",self.isDeleteLineBreak,self.isDeleteAnnotation,self.isDeleteNSLog];
+}
+@end
+
+@implementation SpamCodeFunctionModel
+@end
+
+@implementation MixedFunctionModel
+@end
+
 @implementation FileMixedHelper
 +(instancetype)sharedHelper {
     static FileMixedHelper *fileMixedHelper;
@@ -32,7 +44,12 @@ static const NSString *kRandomAlphabet = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 
 - (void)createData {
     _categoryFileSet = [[NSMutableSet alloc] initWithCapacity:0];
+    
+    self.modelDelete = [[DeleteFunctionModel alloc] init];
+    self.modelSpamCode = [[SpamCodeFunctionModel alloc] init];
+    self.modelMixed = [[MixedFunctionModel alloc] init];
 }
+
 #pragma mark - 替换
 // 正则替换
 - (BOOL)regularReplacement:(NSMutableString *)originalString regularExpression:(NSString *)regularExpression newString:(NSString *)newString {
@@ -135,48 +152,53 @@ static const NSString *kRandomAlphabet = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
     }
 }
 
-- (void)getCategoryFileClassSet:(NSMutableString *)projectContent andSourceCodeDir:(NSString *)sourceCodeDir andIgnoreDir:(NSArray<NSString *> *)ignoreDirNames {
-    if (!_categoryFileSet) {
-        NSFileManager *fm = [NSFileManager defaultManager];
+- (void)getAllCategoryFileClassNameWithSourceCodeDir:(NSString *)sourceCodeDir {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    // 遍历源代码文件 h 与 m 配对，swift
+    NSArray<NSString *> *files = [fm contentsOfDirectoryAtPath:sourceCodeDir error:nil];
+    BOOL isDirectory;
+    
+    NSMutableSet *mSet = [[NSMutableSet alloc] initWithCapacity:0];
+    
+    for (NSString *filePath in files) { // filePath
+        NSString *path = [sourceCodeDir stringByAppendingPathComponent:filePath];
+        if ([fm fileExistsAtPath:path isDirectory:&isDirectory] && isDirectory) {
+            [self getAllCategoryFileClassNameWithSourceCodeDir:path];
+        }
         
-        // 遍历源代码文件 h 与 m 配对，swift
-        NSArray<NSString *> *files = [fm contentsOfDirectoryAtPath:sourceCodeDir error:nil];
-        BOOL isDirectory;
+        NSString *fileName = filePath.lastPathComponent.stringByDeletingPathExtension; //类名：JJCView
+        NSString *fileExtension = filePath.pathExtension; // h/m 文件
         
-        NSMutableSet *mSet = [[NSMutableSet alloc] initWithCapacity:0];
-        
-        for (NSString *filePath in files) { // filePath
-            NSString *path = [sourceCodeDir stringByAppendingPathComponent:filePath];
-            if ([fm fileExistsAtPath:path isDirectory:&isDirectory] && isDirectory) {
-                if (![ignoreDirNames containsObject:filePath]) {
-                    [self getCategoryFileClassSet:projectContent andSourceCodeDir:path andIgnoreDir:ignoreDirNames];
-                }
-            }
+        // 当前为.h 或.m文件
+        if ([fileExtension isEqualToString:@"h"] || [fileExtension isEqualToString:@"m"]) {
             
-            NSString *fileName = filePath.lastPathComponent.stringByDeletingPathExtension; //类名：JJCView
-            NSString *fileExtension = filePath.pathExtension; // h/m 文件
-            
-            // 当前为.h 或.m文件
-            if ([fileExtension isEqualToString:@"h"] || [fileExtension isEqualToString:@"m"]) {
-                //            NSLog(@"当前文件名 ： %@",fileName);
+            //处理是category的情况。
+            if ([fileName containsString:@"+"]) {
+                // 带+（category的方法）
                 
-                //处理是category的情况。
-                if ([fileName containsString:@"+"]) {
-                    // 带+（category的方法）
-                    
-                    // category 所拓展的类名
-                    NSUInteger index = [fileName rangeOfString:@"+"].location;
-                    NSString *className = [fileName substringToIndex:index];
-                    
-                    [mSet addObject:className];
-                }
+                // category 所拓展的类名
+                NSUInteger index = [fileName rangeOfString:@"+"].location;
+                NSString *className = [fileName substringToIndex:index];
+                
+                [_categoryFileSet addObject:className];
             }
         }
-        _categoryFileSet = [mSet copy];
     }
 }
 #pragma mark - Other
 + (void)showAlert:(NSString *)string andDetailString:(NSString *)detailString {
     NSLog(@"%@ \n %@",string, detailString);
+}
+
++ (BOOL)isFolderEmpryWithPath:(NSString *)path {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSArray<NSString *> *arrFiles = [fm contentsOfDirectoryAtPath:path error:nil];
+    
+    if ([arrFiles count] == 0) {
+        return YES;
+    } else {
+        return NO;
+    }
 }
 @end
