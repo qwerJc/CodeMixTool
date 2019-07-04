@@ -30,13 +30,25 @@
     
     @autoreleasepool {
         
-        // 遍历全部文件，准备添加垃圾代码
-        [self addSpamCodeWithSourceCodeFilePath:[FileMixedHelper sharedHelper].sourceCodePath];
+        if ([FileMixedHelper sharedHelper].arrSonPath.count > 0){
+            for (NSString *path in [FileMixedHelper sharedHelper].arrSonPath) {
+                // 遍历全部文件，准备添加垃圾代码
+                [self addSpamCodeWithSourceCodeFilePath:path];
+            }
+        } else {
+            // 遍历全部文件，准备添加垃圾代码
+            [self addSpamCodeWithSourceCodeFilePath:[FileMixedHelper sharedHelper].sourceCodePath];
+        }
     }
 }
 
 // 遍历全部文件
 - (void)addSpamCodeWithSourceCodeFilePath:(NSString *)sourceCodeDir {
+    NSString *projContentPath = [NSString stringWithFormat:@"%@/project.pbxproj",[FileMixedHelper sharedHelper].projPath];
+    NSMutableString *projectContent = [NSMutableString stringWithContentsOfFile:projContentPath
+                                                                       encoding:NSUTF8StringEncoding
+                                                                          error:nil];
+    
     NSFileManager *fm = [NSFileManager defaultManager];
     
     // 遍历源代码文件 h 与 m 配对，swift
@@ -62,6 +74,11 @@
         
         NSString *fileName = filePath.lastPathComponent.stringByDeletingPathExtension;
         NSString *fileExtension = filePath.pathExtension;
+        
+        // 如果当前文件未引入工程，则不进行垃圾代码的添加
+        if (![projectContent containsString:fileName]) {
+            break;
+        }
         
         // 如果当前存在.h.m文件且不是Category
         if ([fileExtension isEqualToString:@"h"] && [files containsObject:[fileName stringByAppendingPathExtension:@"m"]] && [FileMixedHelper isNeedChangedFileName:fileName] && ![fileName containsString:@"+"]) {

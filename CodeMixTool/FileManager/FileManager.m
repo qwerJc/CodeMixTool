@@ -47,16 +47,16 @@
 #pragma mark - 添加垃圾代码
 - (void)addSpamCodeWithOutPath:(NSString *)outPath {
     [FileMixedHelper sharedHelper].modelSpamCode.categoryName = @"qwerJJC";
-    [FileMixedHelper sharedHelper].modelSpamCode.numMFileProperty = NSMakeRange(20, 20);
+    [FileMixedHelper sharedHelper].modelSpamCode.numMFileProperty = NSMakeRange(30, 30);
     [FileMixedHelper sharedHelper].modelSpamCode.lengthMFilePropertyName = NSMakeRange(10, 20);
     
-    [FileMixedHelper sharedHelper].modelSpamCode.numCategoryProperty = NSMakeRange(20, 25);
+    [FileMixedHelper sharedHelper].modelSpamCode.numCategoryProperty = NSMakeRange(30, 25);
     [FileMixedHelper sharedHelper].modelSpamCode.lengthCategoryPropertyName = NSMakeRange(10, 20);
     
-    [FileMixedHelper sharedHelper].modelSpamCode.numCategoryProperty = NSMakeRange(20, 25);
+    [FileMixedHelper sharedHelper].modelSpamCode.numCategoryProperty = NSMakeRange(30, 25);
     [FileMixedHelper sharedHelper].modelSpamCode.lengthCategoryPropertyName = NSMakeRange(10, 20);
     
-    [FileMixedHelper sharedHelper].modelSpamCode.numCategoryMethod = NSMakeRange(20, 20);
+    [FileMixedHelper sharedHelper].modelSpamCode.numCategoryMethod = NSMakeRange(30, 20);
     [FileMixedHelper sharedHelper].modelSpamCode.lengthCategoryMethodName = NSMakeRange(15, 25);
     
     self.managerSpamCode = [[SpamCodeCreateManager alloc] init];

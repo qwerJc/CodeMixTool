@@ -14,6 +14,8 @@
 #import "FunctionModel.h"
 #import "FileManager.h"
 
+#import "SettingViewController.h"
+
 @interface ViewController()<NSTableViewDelegate,NSTableViewDataSource>
 //@property (strong, nonatomic) NSMutableArray *dataSource;
 
@@ -43,6 +45,7 @@
     [self createUI];
 }
 
+
 - (void)createData {
     _arrData = [NSMutableArray arrayWithCapacity:0];
     
@@ -59,6 +62,7 @@
     
     [FileMixedHelper sharedHelper].projPath = @"/Users/jiachen/demo/demo.xcodeproj";
     [FileMixedHelper sharedHelper].sourceCodePath = @"/Users/jiachen/demo/demo";
+    
 }
 
 - (void)createUI {
@@ -234,11 +238,6 @@
             newPath = [NSString stringWithFormat:@"%@",[oPanel URL]];
         }
         
-        if (![FileMixedHelper isFolderEmpryWithPath:newPath]) {
-            [FileMixedHelper showAlert:@"选择错误" andDetailString:@"请选择一个空文件夹"];
-            [self onOpenSpamCodeFilePath];
-        }
-        
         [_txfSpamCodePath setStringValue:newPath];
         
         [FileMixedHelper sharedHelper].spamCodePath = newPath;
@@ -262,11 +261,6 @@
             newPath = [NSString stringWithFormat:@"%@",[oPanel URL]];
         }
         
-        if (![FileMixedHelper isFolderEmpryWithPath:newPath]) {
-            [FileMixedHelper showAlert:@"选择错误" andDetailString:@"请选择一个空文件夹"];
-            [self onSetModifySavePath];
-        }
-        
         [_txfNewCodeFilePath setStringValue:newPath];
         [FileMixedHelper sharedHelper].modifyFileSavePath = newPath;
     }
@@ -281,8 +275,8 @@
     
     FileManager *fileManager = [[FileManager alloc] init];
     
-    [fileManager deleteUselessCode];
-    [fileManager randomClassName];
+//    [fileManager deleteUselessCode];
+//    [fileManager randomClassName];
     [fileManager addSpamCodeWithOutPath:_txfSpamCodePath.stringValue];
 }
 

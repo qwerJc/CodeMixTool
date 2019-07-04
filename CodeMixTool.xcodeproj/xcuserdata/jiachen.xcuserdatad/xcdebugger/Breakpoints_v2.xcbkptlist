@@ -42,7 +42,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CodeMixTool/FileManager/FileManager.m"
-            timestampString = "583818554.608514"
+            timestampString = "583910659.445047"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "75"
@@ -56,7 +56,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CodeMixTool/FileManager/FileManager.m"
-            timestampString = "583818554.608598"
+            timestampString = "583910659.445177"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "75"
@@ -96,11 +96,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CodeMixTool/FileManager/SpamCode/SpamCodeCreateManager.m"
-            timestampString = "583824950.469707"
+            timestampString = "583910659.445318"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "144"
-            endingLineNumber = "144"
+            startingLineNumber = "161"
+            endingLineNumber = "161"
             landmarkName = "-addSpamCategoryFileWithClassName:andSourceCodeDir:"
             landmarkType = "7">
          </BreakpointContent>
@@ -112,11 +112,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CodeMixTool/FileManager/SpamCode/SpamCodeCreateManager.m"
-            timestampString = "583824950.470413"
+            timestampString = "583910659.4454139"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "123"
-            endingLineNumber = "123"
+            startingLineNumber = "140"
+            endingLineNumber = "140"
             landmarkName = "-addSpamCodeInMFileWithClassName:andSourceCodePath:"
             landmarkType = "7">
          </BreakpointContent>
@@ -128,27 +128,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CodeMixTool/FileManager/MixClassName/MixClassNameManager.m"
-            timestampString = "583824950.47092"
+            timestampString = "583910659.445506"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "86"
-            endingLineNumber = "86"
-            landmarkName = "-changeRandomClassNameWithXCProjContent:andCodeFilePath:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CodeMixTool/FileManager/MixClassName/MixClassNameManager.m"
-            timestampString = "583824950.471066"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "111"
-            endingLineNumber = "111"
+            startingLineNumber = "96"
+            endingLineNumber = "96"
             landmarkName = "-changeRandomClassNameWithXCProjContent:andCodeFilePath:"
             landmarkType = "7">
          </BreakpointContent>
@@ -160,11 +144,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CodeMixTool/FileManager/SpamCode/SpamCodeCreateManager.m"
-            timestampString = "583825375.322348"
+            timestampString = "583910659.445601"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "146"
-            endingLineNumber = "146"
+            startingLineNumber = "163"
+            endingLineNumber = "163"
             landmarkName = "-addSpamCategoryFileWithClassName:andSourceCodeDir:"
             landmarkType = "7">
          </BreakpointContent>
@@ -176,11 +160,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CodeMixTool/FileManager/SpamCode/SpamCodeCreateManager.m"
-            timestampString = "583825376.601509"
+            timestampString = "583910659.445689"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "155"
-            endingLineNumber = "155"
+            startingLineNumber = "172"
+            endingLineNumber = "172"
             landmarkName = "-addSpamCategoryFileWithClassName:andSourceCodeDir:"
             landmarkType = "7">
          </BreakpointContent>
@@ -192,11 +176,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CodeMixTool/FileManager/SpamCode/SpamCodeCreateManager.m"
-            timestampString = "583825377.197682"
+            timestampString = "583910659.445774"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "157"
-            endingLineNumber = "157"
+            startingLineNumber = "174"
+            endingLineNumber = "174"
             landmarkName = "-addSpamCategoryFileWithClassName:andSourceCodeDir:"
             landmarkType = "7">
          </BreakpointContent>
@@ -208,11 +192,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CodeMixTool/FileManager/SpamCode/SpamCodeCreateManager.m"
-            timestampString = "583825385.6473449"
+            timestampString = "583910659.445876"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "152"
-            endingLineNumber = "152"
+            startingLineNumber = "169"
+            endingLineNumber = "169"
             landmarkName = "-addSpamCategoryFileWithClassName:andSourceCodeDir:"
             landmarkType = "7">
          </BreakpointContent>
@@ -224,11 +208,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CodeMixTool/FileManager/SpamCode/SpamCodeCreateManager.m"
-            timestampString = "583825386.2701809"
+            timestampString = "583910659.445964"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "141"
-            endingLineNumber = "141"
+            startingLineNumber = "158"
+            endingLineNumber = "158"
             landmarkName = "-addSpamCategoryFileWithClassName:andSourceCodeDir:"
             landmarkType = "7">
          </BreakpointContent>

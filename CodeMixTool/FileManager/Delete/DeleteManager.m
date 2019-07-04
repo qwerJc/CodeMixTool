@@ -13,7 +13,15 @@
 
 - (void)startDelete {
     @autoreleasepool {
-        [self deleteWithWithFilePath:[FileMixedHelper sharedHelper].sourceCodePath];
+        if ([FileMixedHelper sharedHelper].arrSonPath.count > 0){
+            for (NSString *path in [FileMixedHelper sharedHelper].arrSonPath) {
+                [self deleteWithWithFilePath:path];
+            }
+        } else {
+            [self deleteWithWithFilePath:[FileMixedHelper sharedHelper].sourceCodePath];
+        }
+        
+        
     }
 }
 

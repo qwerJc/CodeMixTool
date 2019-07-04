@@ -42,10 +42,20 @@
             return ;
         }
         
-        [self changeRandomClassNameWithXCProjContent:projectContent
-                                     andCodeFilePath:[FileMixedHelper sharedHelper].sourceCodePath];
+        if ([FileMixedHelper sharedHelper].arrSonPath.count > 0){
+            for (NSString *path in [FileMixedHelper sharedHelper].arrSonPath) {
+                [self changeRandomClassNameWithXCProjContent:projectContent
+                                             andCodeFilePath:path];
+                
+                [projectContent writeToFile:projContentPath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+            }
+        } else {
+            [self changeRandomClassNameWithXCProjContent:projectContent
+                                         andCodeFilePath:[FileMixedHelper sharedHelper].sourceCodePath];
+            
+            [projectContent writeToFile:projContentPath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        }
         
-        [projectContent writeToFile:projContentPath atomically:YES encoding:NSUTF8StringEncoding error:nil];
     }
 }
 
