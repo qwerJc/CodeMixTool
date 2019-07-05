@@ -14,8 +14,6 @@
 #import "FunctionModel.h"
 #import "FileManager.h"
 
-#import "SettingViewController.h"
-
 @interface ViewController()<NSTableViewDelegate,NSTableViewDataSource>
 //@property (strong, nonatomic) NSMutableArray *dataSource;
 
@@ -269,15 +267,15 @@
 - (void)onRunAction {
     
     NSLog(@"=========================");
-    [[FileMixedHelper sharedHelper] getAllCategoryFileClassNameWithSourceCodeDir:[FileMixedHelper sharedHelper].sourceCodePath];
+    [[FileMixedHelper sharedHelper] getIgnoreFileWithSourceCodeDir:[FileMixedHelper sharedHelper].sourceCodePath];
     NSLog(@"输出所有category 文件：%@",[FileMixedHelper sharedHelper].categoryFileSet);
     NSLog(@"=========================");
     
     FileManager *fileManager = [[FileManager alloc] init];
     
 //    [fileManager deleteUselessCode];
-//    [fileManager randomClassName];
-    [fileManager addSpamCodeWithOutPath:_txfSpamCodePath.stringValue];
+    [fileManager randomClassName];
+//    [fileManager addSpamCodeWithOutPath:_txfSpamCodePath.stringValue];
 }
 
 - (void)setRepresentedObject:(id)representedObject {

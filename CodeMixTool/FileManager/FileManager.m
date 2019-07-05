@@ -37,7 +37,8 @@
 
 #pragma mark - 混淆类名
 - (void)randomClassName {
-    [FileMixedHelper sharedHelper].modelMixed.lengthRandomClassName = NSMakeRange(10, 10);
+//    [FileMixedHelper sharedHelper].modelMixed.lengthRandomClassName = NSMakeRange(10, 10);
+    [FileMixedHelper sharedHelper].modelMixed.preName = @"JJC_";
     
     self.managerMixClassName = [[MixClassNameManager alloc] init];
     

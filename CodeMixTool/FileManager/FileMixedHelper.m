@@ -48,6 +48,8 @@ static const NSString *kRandomAlphabet = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
     self.modelDelete = [[DeleteFunctionModel alloc] init];
     self.modelSpamCode = [[SpamCodeFunctionModel alloc] init];
     self.modelMixed = [[MixedFunctionModel alloc] init];
+    
+    _ignorePath = @"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone/ThirdParty_Components/";
 }
 
 #pragma mark - 替换
@@ -152,36 +154,85 @@ static const NSString *kRandomAlphabet = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
     }
 }
 
-- (void)getAllCategoryFileClassNameWithSourceCodeDir:(NSString *)sourceCodeDir {
+- (void)getIgnoreFileWithSourceCodeDir:(NSString *)sourceCodeDir {
     NSFileManager *fm = [NSFileManager defaultManager];
     
     // 遍历源代码文件 h 与 m 配对，swift
     NSArray<NSString *> *files = [fm contentsOfDirectoryAtPath:sourceCodeDir error:nil];
     BOOL isDirectory;
     
-    NSMutableSet *mSet = [[NSMutableSet alloc] initWithCapacity:0];
-    
-    for (NSString *filePath in files) { // filePath
-        NSString *path = [sourceCodeDir stringByAppendingPathComponent:filePath];
-        if ([fm fileExistsAtPath:path isDirectory:&isDirectory] && isDirectory) {
-            [self getAllCategoryFileClassNameWithSourceCodeDir:path];
+    for (NSString *file in files) { // filePath
+        NSString *filePath = [sourceCodeDir stringByAppendingPathComponent:file];
+        if ([fm fileExistsAtPath:filePath isDirectory:&isDirectory] && isDirectory) {
+            [self getIgnoreFileWithSourceCodeDir:filePath];
+            continue;
         }
         
-        NSString *fileName = filePath.lastPathComponent.stringByDeletingPathExtension; //类名：JJCView
-        NSString *fileExtension = filePath.pathExtension; // h/m 文件
-        
-        // 当前为.h 或.m文件
+        NSString *fileName = file.lastPathComponent.stringByDeletingPathExtension; //类名：JJCView
+        NSString *fileExtension = file.pathExtension; // h/m 文件
         if ([fileExtension isEqualToString:@"h"] || [fileExtension isEqualToString:@"m"]) {
+            // 获取文件名带+的
+            [self getAllCategoryFileWithFileName:fileName];
             
-            //处理是category的情况。
-            if ([fileName containsString:@"+"]) {
-                // 带+（category的方法）
-                
-                // category 所拓展的类名
-                NSUInteger index = [fileName rangeOfString:@"+"].location;
-                NSString *className = [fileName substringToIndex:index];
-                
+            // 获取import<>的和@class的
+            NSMutableString *fileContent = [NSMutableString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
+            [self getImportFileNameWithFileContent:fileContent];
+        }
+    }
+}
+- (void)getAllCategoryFileWithFileName:(NSString *)fileName {
+    //处理是category的情况。
+    if ([fileName containsString:@"+"]) {
+        // 带+（category的方法）
+        
+        // category 所拓展的类名q
+        NSUInteger index = [fileName rangeOfString:@"+"].location;
+        NSString *className = [fileName substringToIndex:index];
+        
+        if (![_categoryFileSet containsObject:className]) {
+            [_categoryFileSet addObject:className];
+        }
+    }
+}
+
+- (void)getImportFileNameWithFileContent:(NSString *)fileContent {
+    
+    // #import"" 和 #import<>
+    NSString *mRegularExpression = [NSString stringWithFormat:@"(?<=[<]).*(?=.h[>])"];
+    NSRegularExpression *mExpression = [NSRegularExpression regularExpressionWithPattern:mRegularExpression options:NSRegularExpressionAnchorsMatchLines|NSRegularExpressionUseUnixLineSeparators error:nil];
+    NSArray<NSTextCheckingResult *> *mMatches = [mExpression matchesInString:fileContent options:0 range:NSMakeRange(0, fileContent.length)];
+    
+    if (mMatches.count > 0) {
+        for (NSTextCheckingResult *result in mMatches) {
+            NSRange range = result.range;
+            NSString *className = [fileContent substringWithRange:range];
+            if (![_categoryFileSet containsObject:className]) {
                 [_categoryFileSet addObject:className];
+            }
+        }
+    }
+    
+    // @class XX,xx,xx;
+    NSString *classRegularExpression = [NSString stringWithFormat:@"(?<=@class ).*(?=;)"];
+    mExpression = [NSRegularExpression regularExpressionWithPattern:classRegularExpression options:NSRegularExpressionAnchorsMatchLines|NSRegularExpressionUseUnixLineSeparators error:nil];
+    mMatches = [mExpression matchesInString:fileContent options:0 range:NSMakeRange(0, fileContent.length)];
+    if (mMatches.count > 0) {
+        for (NSTextCheckingResult *result in mMatches) {
+            NSRange range = result.range;
+            // sumClassName 中可能包含
+            NSString *sumClassName = [fileContent substringWithRange:range];
+            
+            if ([sumClassName containsString:@","]) {
+                for (NSString *className in [sumClassName componentsSeparatedByString:@","]) {
+                    if (![_categoryFileSet containsObject:className]) {
+                        [_categoryFileSet addObject:className];
+                    }
+                }
+            } else {
+                // @class 只包含一个
+                if (![_categoryFileSet containsObject:sumClassName]) {
+                    [_categoryFileSet addObject:sumClassName];
+                }
             }
         }
     }

@@ -55,6 +55,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic) NSString *spamCodePath;               // 垃圾代码输出路经
 @property (strong, nonatomic) NSString *modifyFileSavePath;         // 修改后文件存储路径
 
+@property (strong, nonatomic) NSString *ignorePath;                 // 设置 忽略路径
+
 @property (strong, nonatomic) DeleteFunctionModel       *modelDelete;
 @property (strong, nonatomic) SpamCodeFunctionModel     *modelSpamCode;
 @property (strong, nonatomic) MixedFunctionModel        *modelMixed;
@@ -107,8 +109,12 @@ NS_ASSUME_NONNULL_BEGIN
 /* 当前类名是否需要替换 */
 + (BOOL)isNeedChangedFileName:(NSString *)name;
 
+/* 获取忽略的文件名（category文件和<import文件>） */
+- (void)getIgnoreFileWithSourceCodeDir:(NSString *)sourceCodeDir;
+
 // 获取category所拓展的文件合集
 - (void)getAllCategoryFileClassNameWithSourceCodeDir:(NSString *)sourceCodeDir;
+
 
 #pragma mark - Other
 

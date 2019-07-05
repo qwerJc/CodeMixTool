@@ -9,22 +9,7 @@
 #import "MixClassNameManager.h"
 #import "FileMixedHelper.h"
 
-@interface MixClassNameManager ()
-//
-//@property (assign, nonatomic) NSRange randomClassNameRange; // 是否使用随机类名
-//
-//@property (strong, nonatomic) NSString *preName;
-//@property (assign, nonatomic) NSRange preNameLengthRange;
-//
-//@property (strong, nonatomic) NSString *infixName;
-//@property (assign, nonatomic) NSRange infixNameLengthRange;
-//
-//@property (strong, nonatomic) NSString *suffixName;
-//@property (assign, nonatomic) NSRange suffixNameLengthRange;
-@end
-
 @implementation MixClassNameManager
-
 
 #pragma mark - 开始混淆
 - (void)startMixed {
@@ -77,7 +62,7 @@
         
         // fileExistsAtPath 判断当前路径下是否为路径，若isDirectory为Yes则是路径
         if ([fm fileExistsAtPath:path isDirectory:&isDirectory] && isDirectory) {
-            if (![path containsString:@"/assets/images"]) {
+            if (![path containsString:@"/assets/images"] && ![path containsString:[FileMixedHelper sharedHelper].ignorePath]) {
                 [self changeRandomClassNameWithXCProjContent:projectContent andCodeFilePath:path];
             } else {
                 NSLog(@"忽略");
@@ -146,19 +131,20 @@
         return [FileMixedHelper randomString:length];
     } else {
         NSString *newClassName;
+        NSString *preName;
         // 如果存在 固定前缀/随机前缀
-        if ([FileMixedHelper sharedHelper].modelMixed.preName) {
-            newClassName = [FileMixedHelper sharedHelper].modelMixed.preName;
+        if ([FileMixedHelper sharedHelper].modelMixed.preName.length > 0) {
+            preName = [FileMixedHelper sharedHelper].modelMixed.preName;
         } else if ([FileMixedHelper sharedHelper].modelMixed.lengthPreName.location>0 || [FileMixedHelper sharedHelper].modelMixed.lengthPreName.length>0) {
             NSUInteger length = arc4random_uniform((uint32_t)[FileMixedHelper sharedHelper].modelMixed.lengthPreName.length) + [FileMixedHelper sharedHelper].modelMixed.lengthPreName.location;
-            newClassName = [FileMixedHelper randomString:length];
+            preName = [FileMixedHelper randomString:length];
         }
         
         // 如果存在 固定中缀/随机中缀
-        if ([FileMixedHelper sharedHelper].modelMixed.infixName) {
+        if ([FileMixedHelper sharedHelper].modelMixed.infixName.length > 0) {
             if (oldClassName.length > 1) {
                 NSUInteger index = oldClassName.length/2;
-                newClassName = [[[newClassName stringByAppendingString:[oldClassName substringToIndex:index]]
+                newClassName = [[[preName stringByAppendingString:[oldClassName substringToIndex:index]]
                                                stringByAppendingString:[FileMixedHelper sharedHelper].modelMixed.infixName]
                                                stringByAppendingString:[oldClassName substringFromIndex:index]];
             }
@@ -168,10 +154,12 @@
                 NSString *randomString = [FileMixedHelper randomString:length];
                 
                 NSUInteger index = oldClassName.length/2;
-                newClassName = [[[newClassName stringByAppendingString:[oldClassName substringToIndex:index]]
+                newClassName = [[[preName stringByAppendingString:[oldClassName substringToIndex:index]]
                                  stringByAppendingString:randomString]
                                 stringByAppendingString:[oldClassName substringFromIndex:index]];
             }
+        } else {
+            newClassName = [NSString stringWithFormat:@"%@%@",preName,oldClassName];
         }
         
         // 如果存在 固定后缀/随机后缀
@@ -183,6 +171,7 @@
             NSString *randomString = [FileMixedHelper randomString:length];
             newClassName = [newClassName stringByAppendingString:randomString];
         }
+        
         
         if (newClassName.length>0 && ![newClassName isEqualToString:oldClassName]) {
             return newClassName;

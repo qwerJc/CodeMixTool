@@ -86,7 +86,6 @@
             // 在.m文件中 添加 垃圾代码
             [self addSpamCodeInMFileWithClassName:fileName andSourceCodePath:sourceCodeDir];
             
-            NSLog(@"%@",[FileMixedHelper sharedHelper].spamCodePath);
             if ([FileMixedHelper sharedHelper].spamCodePath.length > 0) {
                 [self addSpamCategoryFileWithClassName:fileName andSourceCodeDir:sourceCodeDir];
             }
@@ -117,13 +116,13 @@
         NSString *newInterfaceCode = [self addSpamPropertyCodeWithFileName:className andMFileContent:newMFileContent];
         if (newInterfaceCode.length > 0) {
             newMFileContent = newInterfaceCode;
-            
+
             // 添加 垃圾属性的 统一调用方法
             NSString *newCallMethodCode = [self addCallMethodWithFileName:className andMFileContent:newInterfaceCode];
             if (newCallMethodCode.length > 0) {
                 newMFileContent = newCallMethodCode;
             }
-            
+
             // 添加 重写 垃圾属性的 set 方法
             NSString *newSetMethodCode = [self addSpamSetMethodWithFileName:className andMFileContent:newMFileContent];
             if (newSetMethodCode.length > 0) {
