@@ -50,8 +50,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (copy, nonatomic, readonly) NSMutableSet *categoryFileSet; // category文件的集合
 
 @property (strong, nonatomic) NSString *projPath;                   // .xcodeProj 文件路径
+@property (copy, nonatomic) NSArray<NSString *> *arrLibraryProjPath;                   // .xcodeProj 文件路径
 @property (strong, nonatomic) NSString *sourceCodePath;               // 代码文件总路径
-@property (strong, nonatomic) NSArray<NSString *> * arrSonPath;     // 子路径
+@property (copy, nonatomic) NSArray<NSString *> *arrSonPath;     // 子路径
 @property (strong, nonatomic) NSString *spamCodePath;               // 垃圾代码输出路经
 @property (strong, nonatomic) NSString *modifyFileSavePath;         // 修改后文件存储路径
 

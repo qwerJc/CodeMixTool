@@ -26,7 +26,7 @@
 @property (strong, nonatomic) NSTextField *txfSpamCodePath;
 @property (strong, nonatomic) NSTextField *txfNewCodeFilePath;
 
-@property (strong, nonatomic) NSTextField *txfWordLibrary;
+@property (strong, nonatomic) NSTextField *txfIgnoreWord;
 
 @property (strong, nonatomic) FileManager *fileManager;
 
@@ -40,9 +40,9 @@
     [super viewDidLoad];
 
     // Do any additional setup after loading the view.
-//    [self createUI];
-    [self createData];
+
     [self createUI];
+    [self createData];
 }
 
 
@@ -84,7 +84,12 @@
     [_txfProjPath setSelectable:NO];
     [self.view addSubview:_txfProjPath];
     
-    NSButton *btnCodePath = [[NSButton alloc] initWithFrame:CGRectMake(20, MarginTop(100), 200, 34)];
+    NSButton *btnLibraryProjPath = [[NSButton alloc] initWithFrame:CGRectMake(60, MarginTop(100), 200, 34)];
+    btnLibraryProjPath.title = @"选择 库里.xcodeproj文件";
+    [btnLibraryProjPath setAction:@selector(onOpenLibraryXcodeproj)];
+    [self.view addSubview:btnLibraryProjPath];
+    
+    NSButton *btnCodePath = [[NSButton alloc] initWithFrame:CGRectMake(20, MarginTop(150), 200, 34)];
     btnCodePath.title = @"选择代码文件夹";
     [btnCodePath setAction:@selector(onOpenCodePath)];
     [self.view addSubview:btnCodePath];
@@ -97,7 +102,7 @@
     [_txfCodePath setSelectable:NO];
     [self.view addSubview:_txfCodePath];
     
-    NSButton *btnChoseSonPath = [[NSButton alloc] initWithFrame:CGRectMake(20, MarginTop(150), 200, 34)];
+    NSButton *btnChoseSonPath = [[NSButton alloc] initWithFrame:CGRectMake(20, MarginTop(200), 200, 34)];
     btnChoseSonPath.title = @"选择需要执行的子文件夹";
     [btnChoseSonPath setAction:@selector(onOpenSonPath)];
     [self.view addSubview:btnChoseSonPath];
@@ -110,7 +115,7 @@
     [_txfSonPath setSelectable:NO];
     [self.view addSubview:_txfSonPath];
     
-    NSButton *btnSpamCodeFilePath = [[NSButton alloc] initWithFrame:CGRectMake(20, MarginTop(200), 200, 34)];
+    NSButton *btnSpamCodeFilePath = [[NSButton alloc] initWithFrame:CGRectMake(20, MarginTop(250), 200, 34)];
     btnSpamCodeFilePath.title = @"选择垃圾代码存放路径";
     [btnSpamCodeFilePath setAction:@selector(onOpenSpamCodeFilePath)];
     [self.view addSubview:btnSpamCodeFilePath];
@@ -123,7 +128,7 @@
     [_txfSpamCodePath setSelectable:NO];
     [self.view addSubview:_txfSpamCodePath];
     
-    NSButton *btnNewCodeFilePath = [[NSButton alloc] initWithFrame:CGRectMake(20, MarginTop(250), 200, 34)];
+    NSButton *btnNewCodeFilePath = [[NSButton alloc] initWithFrame:CGRectMake(20, MarginTop(300), 200, 34)];
     btnNewCodeFilePath.title = @"选择整合后的代码存放路径";
     [btnNewCodeFilePath setAction:@selector(onSetModifySavePath)];
     [self.view addSubview:btnNewCodeFilePath];
@@ -136,11 +141,10 @@
     [_txfNewCodeFilePath setSelectable:NO];
     [self.view addSubview:_txfNewCodeFilePath];
     
-    _txfWordLibrary = [[NSTextField alloc] initWithFrame:CGRectMake(20, 200, NSWidth(self.view.frame)-40, 400)];
-//    [_txfWordLibrary setStringValue:@""];
-//
-//    [_txfWordLibrary setBezeled:NO];
-    [self.view addSubview:_txfWordLibrary];
+    _txfIgnoreWord = [[NSTextField alloc] initWithFrame:CGRectMake(20, 200, NSWidth(self.view.frame)-40, 100)];
+    [_txfIgnoreWord setStringValue:@"IMChatListMessageData,IMChatDetailMessageData,KLSwitch"];
+    [_txfIgnoreWord setBezeled:NO];
+    [self.view addSubview:_txfIgnoreWord];
     
     NSButton *btnRun = [NSButton buttonWithTitle:@"Run" target:self action:@selector(onRunAction)];
     btnRun.frame = CGRectMake(50, 50, 200, 100);
@@ -156,7 +160,9 @@
     [oPanel setCanChooseFiles:YES]; //不能打开文件(我需要处理一个目录内的所有文件)
     NSInteger finded = [oPanel runModal]; //获取panel的响应
     
+    
     if (finded == NSModalResponseOK) {
+
         NSString *newPath;
         
         NSString *preString = [[NSString stringWithFormat:@"%@",[oPanel URL]] substringToIndex:7];
@@ -165,10 +171,40 @@
         } else {
             newPath = [NSString stringWithFormat:@"%@",[oPanel URL]];
         }
+        
         NSLog(@"选择路径：%@",newPath);
         [_txfProjPath setStringValue:newPath];
         
         [FileMixedHelper sharedHelper].projPath = newPath;
+    }
+}
+
+- (void)onOpenLibraryXcodeproj {
+    NSOpenPanel *oPanel = [NSOpenPanel openPanel];
+    [oPanel setCanChooseDirectories:YES]; //可以打开目录
+    [oPanel setCanChooseFiles:YES]; //不能打开文件(我需要处理一个目录内的所有文件)
+    [oPanel setAllowsMultipleSelection:YES];//是否允许多选file
+    NSInteger finded = [oPanel runModal]; //获取panel的响应
+    
+    NSMutableArray *arrXcodeprojPath = [NSMutableArray arrayWithCapacity:0];
+    
+    if (finded == NSModalResponseOK) {
+        NSString *newPath;
+        
+        for (NSURL *pathURL in [oPanel URLs]) {
+            
+            NSString *path = [NSString stringWithFormat:@"%@",pathURL];
+            if ([path hasPrefix:@"file://"]) {
+                [arrXcodeprojPath addObject:[path substringFromIndex:7]];
+            } else {
+                [arrXcodeprojPath addObject:path];
+            }
+            
+            NSLog(@"选择 库里 XcodeProj路径：%@",newPath);
+            [_txfProjPath setStringValue:newPath];
+        }
+        
+        [FileMixedHelper sharedHelper].arrLibraryProjPath = [arrXcodeprojPath copy];
     }
 }
 

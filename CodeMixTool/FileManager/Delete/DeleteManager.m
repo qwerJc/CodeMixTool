@@ -54,7 +54,8 @@
         // 删除 NSLog
         if ([FileMixedHelper sharedHelper].modelDelete.isDeleteNSLog) {
             // 删除NSLog
-            [[FileMixedHelper sharedHelper] regularReplacement:fileContent regularExpression:@"NSLog[(]@.*;" newString:@""];
+            // NSLog[(]@[\S,\s]*?[)];  NSLog[(]@.*;
+            [[FileMixedHelper sharedHelper] regularReplacement:fileContent regularExpression:@"NSLog[(]@[\\S,\\s]*?[)];" newString:@""];
             
         }
         
