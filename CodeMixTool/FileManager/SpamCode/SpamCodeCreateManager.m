@@ -77,7 +77,7 @@
         
         // 如果当前文件未引入工程，则不进行垃圾代码的添加
         if (![projectContent containsString:fileName]) {
-            break;
+            continue;
         }
         
         // 如果当前存在.h.m文件且不是Category

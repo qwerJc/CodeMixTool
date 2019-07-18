@@ -33,7 +33,8 @@
         for (int i=0; i<propertyNum; i++) {
             NSUInteger typeIndex = arc4random()%10;
             NSInteger randomPropertyNameLength = rangePropertyNameLength.location + arc4random()%rangePropertyNameLength.length;
-            NSString *propertyName = [SpamCodeTools getRandomPropertyNameWithLength:randomPropertyNameLength];
+//            NSString *propertyName = [SpamCodeTools getRandomPropertyNameWithLength:randomPropertyNameLength];
+            NSString *propertyName = [FileMixedHelper randomWordPropertyName];;
             NSString *tempPropertyCode = [SpamCodeTools getPropertyCodeWithName:propertyName andPropertyType:typeIndex];
             
             [sumPropertyCode appendString:tempPropertyCode];
@@ -58,15 +59,16 @@
         NSInteger methodNum = rangeMethodNum.location + arc4random()%rangeMethodNum.length;
         for (int i =0; i < methodNum; i++) {
             NSInteger methodNameLength = rangeMethodNameLength.location + arc4random()%rangeMethodNameLength.length;
-            NSString *methodName = [SpamCodeTools getRandomMethodNameWithLength:methodNameLength];
-            
+//            NSString *methodName = [SpamCodeTools getRandomMethodNameWithLength:methodNameLength];
+            NSString *methodName = [FileMixedHelper randomWordMethodName];
             // 返回值类型
             NSUInteger returnType = arc4random()%8;
             
             // 参数名（为nil时则没有参数）
             NSString *paramName;
             if (returnType > 0 && arc4random()%3 > 0) {
-                paramName = [SpamCodeTools getRandomPropertyNameWithLength:25];
+//                paramName = [SpamCodeTools getRandomPropertyNameWithLength:25];
+                paramName = [FileMixedHelper randomWordPropertyName];
             }
             
             

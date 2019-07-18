@@ -57,6 +57,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (strong, nonatomic) NSString *ignorePath;                 // 设置 忽略路径
 
+@property (strong, nonatomic) NSArray *arrayNWordLibrary;
+@property (strong, nonatomic) NSArray *arrayAdvWordLibrary;
+@property (strong, nonatomic) NSArray *arrayAdjWordLibrary;
+@property (strong, nonatomic) NSArray *arrayVtWordLibrary;
+
 @property (strong, nonatomic) DeleteFunctionModel       *modelDelete;
 @property (strong, nonatomic) SpamCodeFunctionModel     *modelSpamCode;
 @property (strong, nonatomic) MixedFunctionModel        *modelMixed;
@@ -90,9 +95,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)resaveFileWithOldFilePath:(NSString *)oldPath andNewFilePath:(NSString *)newPath;
 #pragma mark - 返回随机字符串
++ (NSString *)randomWord;
+
++ (NSString *)randomWordPropertyName;
++ (NSString *)randomWordClassName;
++ (NSString *)randomWordMethodName;
 /**
  返回随机字符串
-
  @param length 字符串长度
  */
 + (NSString *)randomString:(NSInteger )length;

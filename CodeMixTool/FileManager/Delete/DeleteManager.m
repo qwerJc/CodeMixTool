@@ -20,8 +20,7 @@
         } else {
             [self deleteWithWithFilePath:[FileMixedHelper sharedHelper].sourceCodePath];
         }
-        
-        
+
     }
 }
 
@@ -38,16 +37,18 @@
         if (![fileName hasSuffix:@".h"] && ![fileName hasSuffix:@".m"] && ![fileName hasSuffix:@".mm"] && ![fileName hasSuffix:@".swift"]) continue;
         NSMutableString *fileContent = [NSMutableString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
         
+        // 删除 注释
+        if ([FileMixedHelper sharedHelper].modelDelete.isDeleteAnnotation) {
+            [[FileMixedHelper sharedHelper] regularReplacement:fileContent regularExpression:@"([^:/*\"])//.*" newString:@"\\1"];
+            //忽略1http://asdfff 2/// 3/*adddf*//*adaf*/ 4"//asdfasdf
+            
+            [[FileMixedHelper sharedHelper] regularReplacement:fileContent regularExpression:@"^//.*" newString:@""]; // 删除 //
+        }
+        
         // 删除 换行符
         if ([FileMixedHelper sharedHelper].modelDelete.isDeleteLineBreak) {
             [[FileMixedHelper sharedHelper] regularReplacement:fileContent regularExpression:@"/\\*{1,2}[\\s\\S]*?\\*/" newString:@""];
             [[FileMixedHelper sharedHelper] regularReplacement:fileContent regularExpression:@"^\\s*\\n" newString:@""];
-        }
-        
-        // 删除 注释
-        if ([FileMixedHelper sharedHelper].modelDelete.isDeleteAnnotation) {
-            [[FileMixedHelper sharedHelper] regularReplacement:fileContent regularExpression:@"([^:/])//.*" newString:@"\\1"];
-            [[FileMixedHelper sharedHelper] regularReplacement:fileContent regularExpression:@"^//.*" newString:@""]; // 删除 //
         }
         
         // 删除 NSLog

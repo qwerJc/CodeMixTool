@@ -47,7 +47,7 @@
 
 #pragma mark - 添加垃圾代码
 - (void)addSpamCodeWithOutPath:(NSString *)outPath {
-    [FileMixedHelper sharedHelper].modelSpamCode.categoryName = @"qwerJJC";
+    [FileMixedHelper sharedHelper].modelSpamCode.categoryName = @"LLiveRoom";
     [FileMixedHelper sharedHelper].modelSpamCode.numMFileProperty = NSMakeRange(30, 30);
     [FileMixedHelper sharedHelper].modelSpamCode.lengthMFilePropertyName = NSMakeRange(10, 20);
     

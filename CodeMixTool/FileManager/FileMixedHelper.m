@@ -22,6 +22,7 @@ static const NSString *kRandomAlphabet = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 @implementation MixedFunctionModel
 @end
 
+
 @implementation FileMixedHelper
 +(instancetype)sharedHelper {
     static FileMixedHelper *fileMixedHelper;
@@ -121,6 +122,92 @@ static const NSString *kRandomAlphabet = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
     }
 }
 #pragma mark - Return String
++ (NSString *)randomWordWithIndex:(NSInteger)index {
+    // index : 1-4
+    
+    if (index == 0) {
+        // n.
+        NSInteger i = arc4random()%[FileMixedHelper sharedHelper].arrayNWordLibrary.count;
+        return [FileMixedHelper sharedHelper].arrayNWordLibrary[i];
+    
+    } else if (index == 1) {
+        // adv.(修饰adj,vt)
+        NSInteger i = arc4random()%[FileMixedHelper sharedHelper].arrayAdvWordLibrary.count;
+        return [FileMixedHelper sharedHelper].arrayAdvWordLibrary[i];
+        
+    } else if (index == 2) {
+        // adj.
+        NSInteger i = arc4random()%[FileMixedHelper sharedHelper].arrayAdjWordLibrary.count;
+        return [FileMixedHelper sharedHelper].arrayAdjWordLibrary[i];
+        
+    } else if (index == 3) {
+        // vt.
+        NSInteger i = arc4random()%[FileMixedHelper sharedHelper].arrayVtWordLibrary.count;
+        return [FileMixedHelper sharedHelper].arrayVtWordLibrary[i];
+    }
+    return @"";
+}
+
++ (NSString *)randomWordPropertyName {
+    NSMutableString *mstr = [[NSMutableString alloc] initWithCapacity:0];
+    
+    [mstr appendString:[self randomWordWithIndex:1]];
+    [mstr appendString:[[self randomWordWithIndex:2] capitalizedString]];
+    
+    NSInteger lengthN = arc4random()%2+2;
+    for (int i = 0; i<lengthN ; i++) {
+        [mstr appendString:[[self randomWordWithIndex:0] capitalizedString]];
+    }
+    
+    if ([[mstr copy] containsString:@"-"]) {
+        NSLog(@"%@",[mstr copy]);
+    }
+    
+    return [mstr copy];
+}
+
++ (NSString *)randomWordClassName {
+    NSMutableString *mstr = [[NSMutableString alloc] initWithCapacity:0];
+    
+    NSInteger lengthAdj = arc4random()%1+1;
+    if (lengthAdj==0) {
+        [mstr appendString:[self randomWordWithIndex:2]];
+    } else {
+        [mstr appendString:[[self randomWordWithIndex:2] capitalizedString]];
+    }
+    
+    
+    NSInteger lengthN = arc4random()%2+2;
+    for (int i = 0; i<lengthN ; i++) {
+        [mstr appendString:[[self randomWordWithIndex:0] capitalizedString]];
+    }
+    
+    [mstr appendString:[[self randomWordWithIndex:1] capitalizedString]];
+    [mstr appendString:[[self randomWordWithIndex:2] capitalizedString]];
+    [mstr appendString:[[self randomWordWithIndex:0] capitalizedString]];
+    return [mstr copy];
+}
+
++ (NSString *)randomWordMethodName {
+    NSMutableString *mstr = [[NSMutableString alloc] initWithCapacity:0];
+    
+    NSInteger lengthADV = arc4random()%1+1;
+    if (lengthADV==0) {
+        [mstr appendString:[self randomWordWithIndex:1]];
+    } else {
+        [mstr appendString:[[self randomWordWithIndex:1] capitalizedString]];
+    }
+    
+    NSInteger lengthVT = arc4random()%1+1;
+    for (int i = 0; i<lengthVT ; i++) {
+        [mstr appendString:[[self randomWordWithIndex:3] capitalizedString]];
+    }
+    
+    [mstr appendString:[[self randomWordWithIndex:0] capitalizedString]];
+    [mstr appendString:[[self randomWordWithIndex:0] capitalizedString]];
+
+    return [mstr copy];
+}
 
 + (NSString *)randomString:(NSInteger )length {
     NSMutableString *str = [NSMutableString stringWithCapacity:length];
@@ -170,13 +257,21 @@ static const NSString *kRandomAlphabet = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
         
         NSString *fileName = file.lastPathComponent.stringByDeletingPathExtension; //类名：JJCView
         NSString *fileExtension = file.pathExtension; // h/m 文件
+        
+//        if ([fileExtension isEqualToString:@"h"] && ![files containsObject:[fileName stringByAppendingPathExtension:@"m"]]) {
+//            // 当前为.h且不存在.m
+//            // 可能为实现文件在库中，暴露出了.h
+//            [_categoryFileSet addObject:fileName];
+//            continue;
+//        }
+        
         if ([fileExtension isEqualToString:@"h"] || [fileExtension isEqualToString:@"m"]) {
             // 获取文件名带+的
             [self getAllCategoryFileWithFileName:fileName];
             
-            // 获取import<>的和@class的
-            NSMutableString *fileContent = [NSMutableString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
-            [self getImportFileNameWithFileContent:fileContent];
+//            // 获取import<>的和@class的
+//            NSMutableString *fileContent = [NSMutableString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
+//            [self getImportFileNameWithFileContent:fileContent];
         }
     }
 }
@@ -237,6 +332,8 @@ static const NSString *kRandomAlphabet = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
         }
     }
 }
+
+
 #pragma mark - Other
 + (void)showAlert:(NSString *)string andDetailString:(NSString *)detailString {
     NSLog(@"%@ \n %@",string, detailString);

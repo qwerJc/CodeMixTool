@@ -26,9 +26,11 @@
         for (int i=0; i<propertyNum; i++) {
             NSUInteger typeIndex = arc4random()%10;
             NSInteger randomPropertyNameLength = rangePropertyNameLength.location + arc4random()%rangePropertyNameLength.length;
-            NSString *tempVarName = [FileMixedHelper randomString:arc4random()%20+15]; // set方法需要的临时变量
+//            NSString *tempVarName = [FileMixedHelper randomString:arc4random()%20+15]; // set方法需要的临时变量
+            NSString *tempVarName = [FileMixedHelper randomWordPropertyName];
             
-            NSString *propertyName = [SpamCodeTools getRandomPropertyNameWithLength:randomPropertyNameLength];
+//            NSString *propertyName = [SpamCodeTools getRandomPropertyNameWithLength:randomPropertyNameLength];
+            NSString *propertyName = [FileMixedHelper randomWordPropertyName];
             NSString *tempPropertyCode = [SpamCodeTools getPropertyCodeWithName:propertyName andPropertyType:typeIndex];
             
             [sumPropertyCode appendString:tempPropertyCode];
@@ -41,7 +43,7 @@
             
             // 添加 所有的set方法
             NSString *strSetMethod = [NSString stringWithFormat:@"- (void)set%@:(%@)%@ { \n    _%@ = %@; \n}\n",
-                                      propertyName,
+                                      [propertyName capitalizedString],
                                       [SpamCodeTools getObjectiveTypeWithIndex:typeIndex],
                                       tempVarName,
                                       propertyName,

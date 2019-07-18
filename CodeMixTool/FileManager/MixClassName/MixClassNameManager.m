@@ -128,7 +128,8 @@
     // 如果当前需要混淆 随机类名
     if ([FileMixedHelper sharedHelper].modelMixed.lengthRandomClassName.location>0 || [FileMixedHelper sharedHelper].modelMixed.lengthRandomClassName.length>0) {
         NSUInteger length = arc4random_uniform((uint32_t)[FileMixedHelper sharedHelper].modelMixed.lengthRandomClassName.length) + [FileMixedHelper sharedHelper].modelMixed.lengthRandomClassName.location;
-        return [FileMixedHelper randomString:length];
+//        return [FileMixedHelper randomString:length];
+        return [FileMixedHelper randomWordClassName];
     } else {
         NSString *newClassName;
         NSString *preName;
