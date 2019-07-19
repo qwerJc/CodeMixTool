@@ -231,16 +231,37 @@ static const NSString *kRandomAlphabet = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 }
 
 #pragma mark - 忽略列表
-+ (BOOL)isNeedChangedFileName:(NSString *)name {
-    if ([name isEqualToString:@"AppDelegate"] ||
-        [name isEqualToString:@"ViewController"]
-        ) {
+- (BOOL)isNeedChangedFileName:(NSString *)name {
+    if ([_ignoreClassNamesSet containsObject:name]) {
         return NO;
     } else {
         return YES;
     }
 }
 
+- (void)getAllCategoryFileClassNameWithSourceCodeDir:(NSString *)sourceCodeDir {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    // 遍历源代码文件 h 与 m 配对，swift
+    NSArray<NSString *> *files = [fm contentsOfDirectoryAtPath:sourceCodeDir error:nil];
+    BOOL isDirectory;
+    
+    for (NSString *file in files) { // filePath
+        NSString *filePath = [sourceCodeDir stringByAppendingPathComponent:file];
+        if ([fm fileExistsAtPath:filePath isDirectory:&isDirectory] && isDirectory) {
+            [self getIgnoreFileWithSourceCodeDir:filePath];
+            continue;
+        }
+        
+        NSString *fileName = file.lastPathComponent.stringByDeletingPathExtension; //类名：JJCView
+        NSString *fileExtension = file.pathExtension; // h/m 文件
+        
+        if ([fileExtension isEqualToString:@"h"] || [fileExtension isEqualToString:@"m"]) {
+            // 获取文件名带+的
+            [self getAllCategoryFileWithFileName:fileName];
+        }
+    }
+}
 - (void)getIgnoreFileWithSourceCodeDir:(NSString *)sourceCodeDir {
     NSFileManager *fm = [NSFileManager defaultManager];
     
@@ -279,6 +300,7 @@ static const NSString *kRandomAlphabet = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
     //处理是category的情况。
     if ([fileName containsString:@"+"]) {
         // 带+（category的方法）
+        [_categoryFileSet addObject:fileName];
         
         // category 所拓展的类名q
         NSUInteger index = [fileName rangeOfString:@"+"].location;

@@ -78,7 +78,7 @@
         case EnumObjectType_NSArray:
             return @"[NSArray array]";
         case EnumObjectType_NSString:
-            return [NSString stringWithFormat:@"@\"%@\"",[FileMixedHelper randomString:50]];
+            return [NSString stringWithFormat:@"@\"%@\"",[FileMixedHelper randomString:10]];
         case EnumObjectType_NSDictionary:
             return @"[[NSDictionary alloc] init]";
         default:

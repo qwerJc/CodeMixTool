@@ -60,9 +60,12 @@
     [_arrData addObject:data3];
     [_arrData addObject:data4];
     
-    [FileMixedHelper sharedHelper].projPath = @"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone.xcodeproj";
-    [FileMixedHelper sharedHelper].sourceCodePath = @"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone";
+//    [FileMixedHelper sharedHelper].projPath = @"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone.xcodeproj";
+//    [FileMixedHelper sharedHelper].sourceCodePath = @"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone";
     
+    // demo
+    [FileMixedHelper sharedHelper].projPath = @"/Users/jiachen/demo/demo.xcodeproj";
+    [FileMixedHelper sharedHelper].sourceCodePath = @"/Users/jiachen/demo/demo";
 }
 
 - (void)createUI {
@@ -311,15 +314,20 @@
 - (void)onRunAction {
     [self temp];
     
+    // 读取忽略的类名
+    NSArray *arrIgnoreClassName = [_txfIgnoreWord.stringValue componentsSeparatedByString:@","];
+    NSMutableSet *mset = [NSMutableSet setWithArray:arrIgnoreClassName];
+    [FileMixedHelper sharedHelper].ignoreClassNamesSet = [mset copy];
+    
     NSLog(@"=========================");
-    [[FileMixedHelper sharedHelper] getIgnoreFileWithSourceCodeDir:[FileMixedHelper sharedHelper].sourceCodePath];
+    [[FileMixedHelper sharedHelper] getAllCategoryFileClassNameWithSourceCodeDir:[FileMixedHelper sharedHelper].sourceCodePath];
     NSLog(@"输出所有category 文件：%@",[FileMixedHelper sharedHelper].categoryFileSet);
     NSLog(@"=========================");
 
     FileManager *fileManager = [[FileManager alloc] init];
 
-    [fileManager deleteUselessCode];
-//    [fileManager randomClassName];
+//    [fileManager deleteUselessCode];
+    [fileManager randomClassName];
 //    [fileManager addSpamCodeWithOutPath:_txfSpamCodePath.stringValue];
 }
 

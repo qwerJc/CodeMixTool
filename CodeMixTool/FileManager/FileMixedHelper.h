@@ -47,12 +47,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 // File Mixed Helper
 @interface FileMixedHelper : NSObject
-@property (copy, nonatomic, readonly) NSMutableSet *categoryFileSet; // category文件的集合
+@property (copy, nonatomic, readonly) NSMutableSet *categoryFileSet; // category文件的集合（ 例如 UIbutton的Category，将包括UIbutton 和 UIbutton+JJC ）
+@property (copy, nonatomic) NSSet *ignoreClassNamesSet; // 手动设置的忽略类名
 
 @property (strong, nonatomic) NSString *projPath;                   // .xcodeProj 文件路径
-@property (copy, nonatomic) NSArray<NSString *> *arrLibraryProjPath;                   // .xcodeProj 文件路径
+@property (copy, nonatomic) NSArray<NSString *> *arrLibraryProjPath;  // .xcodeProj 文件路径
 @property (strong, nonatomic) NSString *sourceCodePath;               // 代码文件总路径
-@property (copy, nonatomic) NSArray<NSString *> *arrSonPath;     // 子路径
+@property (copy, nonatomic) NSArray<NSString *> *arrSonPath;        // 子路径
 @property (strong, nonatomic) NSString *spamCodePath;               // 垃圾代码输出路经
 @property (strong, nonatomic) NSString *modifyFileSavePath;         // 修改后文件存储路径
 
@@ -117,7 +118,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)randomNum;
 #pragma mark - 忽略文件
 /* 当前类名是否需要替换 */
-+ (BOOL)isNeedChangedFileName:(NSString *)name;
+- (BOOL)isNeedChangedFileName:(NSString *)name;
 
 /* 获取忽略的文件名（category文件和<import文件>） */
 - (void)getIgnoreFileWithSourceCodeDir:(NSString *)sourceCodeDir;

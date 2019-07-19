@@ -81,7 +81,7 @@
         }
         
         // 如果当前存在.h.m文件且不是Category
-        if ([fileExtension isEqualToString:@"h"] && [files containsObject:[fileName stringByAppendingPathExtension:@"m"]] && [FileMixedHelper isNeedChangedFileName:fileName] && ![fileName containsString:@"+"]) {
+        if ([fileExtension isEqualToString:@"h"] && [files containsObject:[fileName stringByAppendingPathExtension:@"m"]] && ![[FileMixedHelper sharedHelper].categoryFileSet containsObject:fileName]) {
             
             // 在.m文件中 添加 垃圾代码
             [self addSpamCodeInMFileWithClassName:fileName andSourceCodePath:sourceCodeDir];
