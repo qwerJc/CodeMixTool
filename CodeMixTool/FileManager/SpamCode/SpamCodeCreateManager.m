@@ -147,7 +147,7 @@
 - (void)addSpamCategoryFileWithClassName:(NSString *)className andSourceCodeDir:(NSString *)sourceCodeDir {
     
     // 创建.h文件
-    NSMutableString *hFileContent = [NSMutableString stringWithFormat:@"\n#import \"%@.h\"\n\n@interface %@ (%@)\n%@\n%@\n@end",className,className,[FileMixedHelper sharedHelper].modelSpamCode.categoryName,_modelCategoryCode.propertyCode,_modelCategoryCode.hMethodCode];
+    NSMutableString *hFileContent = [NSMutableString stringWithFormat:@"\n#import \"%@.h\"\n#import <UIKit/UIKit.h>\n\n@interface %@ (%@)\n%@\n%@\n@end",className,className,[FileMixedHelper sharedHelper].modelSpamCode.categoryName,_modelCategoryCode.propertyCode,_modelCategoryCode.hMethodCode];
     
     NSMutableString *mFileContent = [NSMutableString stringWithFormat:@"\n#import \"%@+%@.h\"\n\n@implementation %@ (%@)\n%@\n%@\n@end",className,[FileMixedHelper sharedHelper].modelSpamCode.categoryName,className,[FileMixedHelper sharedHelper].modelSpamCode.categoryName,_modelCategoryCode.mMethodCode,_modelCategoryCode.callMethodCode];
     
@@ -236,15 +236,15 @@
             
             // 如果当前没有 jjc_callAllAddProperty 方法，则代表第一次添加垃圾代码
             if (![implementationContent containsString:@"(void)jjc_callAllAddProperty"]) {
-                NSString *newCallMethod = [NSString stringWithFormat:@"- (void)jjc_callAllAddProperty { \n%@\n}\n@end",_modelPropertyCode.callMethodCode];
+                NSString *newCallMethod = [NSString stringWithFormat:@"- (void)jjc_callAllAddProperty { \n    UIView *viewSum = [[UIView alloc] init];\n\n%@\n}\n@end",_modelPropertyCode.callMethodCode];
                 
                 NSString *newImplementationContent = [implementationContent stringByReplacingOccurrencesOfString:@"@end" withString:newCallMethod];
                 
                 NSString *newMFileContent = [mFileContent stringByReplacingOccurrencesOfString:implementationContent withString:newImplementationContent];
                 return newMFileContent;
             } else {
-                NSString *newInitMethod = [NSString stringWithFormat:@"- (void)jjc_callAllAddProperty { \n%@ ",_modelPropertyCode.callMethodCode];
-                NSString *newImplementationContent = [implementationContent stringByReplacingOccurrencesOfString:@"- (void)jjc_callAllAddProperty {" withString:newInitMethod];
+                NSString *newInitMethod = [NSString stringWithFormat:@"- (void)jjc_callAllAddProperty { \n    UIView *viewSum = [[UIView alloc] init];\n\n%@ ",_modelPropertyCode.callMethodCode];
+                NSString *newImplementationContent = [implementationContent stringByReplacingOccurrencesOfString:@"- (void)jjc_callAllAddProperty { \n    UIView *viewSum = [[UIView alloc] init];\n" withString:newInitMethod];
                 NSString *newMFileContent = [mFileContent stringByReplacingOccurrencesOfString:implementationContent withString:newImplementationContent];
                 return newMFileContent;
             }

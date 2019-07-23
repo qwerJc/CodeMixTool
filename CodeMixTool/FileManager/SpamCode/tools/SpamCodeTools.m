@@ -10,18 +10,13 @@
 #import "FileMixedHelper.h"
 
 @implementation SpamCodeTools
+// set方法,proper声明 初始化时需要
 + (NSString *)getObjectiveTypeWithIndex:(NSUInteger)index {
     switch (index) {
-        case EnumObjectType_Int:
-            return @"char ";
-        case EnumObjectType_Float:
-            return @"int ";
-        case EnumObjectType_Double:
-            return @"float ";
-        case EnumObjectType_Char:
-            return @"char ";
         case EnumObjectType_NSInteger:
-            return @"double ";
+            return @"NSInteger ";
+        case EnumObjectType_BOOL:
+            return @"BOOL ";
             
         case EnumObjectType_NSObject:
             return @"NSObject *";
@@ -33,18 +28,63 @@
             return @"NSString *";
         case EnumObjectType_NSDictionary:
             return @"NSDictionary *";
+            
+        case EnumObjectType_UIView:
+            return @"UIView *";
+        case EnumObjectType_UILabel:
+            return @"UILabel *";
+        case EnumObjectType_UIImageView:
+            return @"UIImageView *";
+        case EnumObjectType_ScrollView:
+            return @"UIScrollView *";
+        case EnumObjectType_UITextField:
+            return @"UITextField *";
+        case EnumObjectType_UITextView:
+            return @"UITextView *";
         default:
             return @"";
     }
 }
 
++ (NSString *)getPropertyNameWithIndex:(NSUInteger)index {
+    NSString *propertyName = [FileMixedHelper randomWordPropertyName];
+    switch (index) {
+        case EnumObjectType_NSInteger:
+            return [NSString stringWithFormat:@"integer%@",propertyName];
+        case EnumObjectType_BOOL:
+            return [NSString stringWithFormat:@"is%@",propertyName];
+            
+        case EnumObjectType_NSObject:
+            return [NSString stringWithFormat:@"obj%@",propertyName];
+        case EnumObjectType_NSSet:
+            return [NSString stringWithFormat:@"nset%@",propertyName];
+        case EnumObjectType_NSArray:
+            return [NSString stringWithFormat:@"arr%@",propertyName];
+        case EnumObjectType_NSString:
+            return [NSString stringWithFormat:@"str%@",propertyName];
+        case EnumObjectType_NSDictionary:
+            return [NSString stringWithFormat:@"dic%@",propertyName];
+            
+        case EnumObjectType_UIView:
+            return [NSString stringWithFormat:@"view%@",propertyName];
+        case EnumObjectType_UILabel:
+            return [NSString stringWithFormat:@"lbl%@",propertyName];
+        case EnumObjectType_UIImageView:
+            return [NSString stringWithFormat:@"imgv%@",propertyName];
+        case EnumObjectType_ScrollView:
+            return [NSString stringWithFormat:@"scrollView%@",propertyName];
+        case EnumObjectType_UITextField:
+            return [NSString stringWithFormat:@"txf%@",propertyName];
+        case EnumObjectType_UITextView:
+            return [NSString stringWithFormat:@"txv%@",propertyName];
+    }
+    return @"";
+}
+
 + (NSString *)getPropertyCodeWithIndex:(NSUInteger)index {
     switch (index) {
-        case EnumObjectType_Int:
-        case EnumObjectType_Float:
-        case EnumObjectType_Double:
-        case EnumObjectType_Char:
         case EnumObjectType_NSInteger:
+        case EnumObjectType_BOOL:
             return @"(assign, nonatomic)";
             
         case EnumObjectType_NSObject:
@@ -52,6 +92,12 @@
         case EnumObjectType_NSArray:
         case EnumObjectType_NSString:
         case EnumObjectType_NSDictionary:
+        case EnumObjectType_UIView:
+        case EnumObjectType_UILabel:
+        case EnumObjectType_UIImageView:
+        case EnumObjectType_ScrollView:
+        case EnumObjectType_UITextField:
+        case EnumObjectType_UITextView:
             return @"(strong, nonatomic)";
         default:
             return @"";
@@ -60,16 +106,10 @@
 
 + (NSString *)getInitCodeWithClassIndex:(NSUInteger)index {
     switch (index) {
-        case EnumObjectType_Int:
-            return [NSString stringWithFormat:@"%@",[FileMixedHelper randomNum]];
-        case EnumObjectType_Float:
-            return [NSString stringWithFormat:@"%@",[FileMixedHelper randomNum]];
-        case EnumObjectType_Double:
-            return [NSString stringWithFormat:@"%@.%@",[FileMixedHelper randomNum],[FileMixedHelper randomNum]];
-        case EnumObjectType_Char:
-            return [NSString stringWithFormat:@"'%@'",[FileMixedHelper randomLetter]];
         case EnumObjectType_NSInteger:
             return [NSString stringWithFormat:@"%@%@%@%@",[FileMixedHelper randomNum],[FileMixedHelper randomNum],[FileMixedHelper randomNum],[FileMixedHelper randomNum]];
+        case EnumObjectType_BOOL:
+            return @"YES";
             
         case EnumObjectType_NSObject:
             return @"[[NSObject alloc] init]";
@@ -81,6 +121,19 @@
             return [NSString stringWithFormat:@"@\"%@\"",[FileMixedHelper randomString:10]];
         case EnumObjectType_NSDictionary:
             return @"[[NSDictionary alloc] init]";
+            
+        case EnumObjectType_UIView:
+            return @"[[UIView alloc] init]";
+        case EnumObjectType_UILabel:
+            return @"[[UILabel alloc] init]";
+        case EnumObjectType_UIImageView:
+            return @"[[UIImageView alloc] init]";
+        case EnumObjectType_ScrollView:
+            return @"[[UIScrollView alloc] init]";
+        case EnumObjectType_UITextField:
+            return @"[[UITextField alloc] init]";
+        case EnumObjectType_UITextView:
+            return @"[[UITextView alloc] init]";
         default:
             return @"";
     }

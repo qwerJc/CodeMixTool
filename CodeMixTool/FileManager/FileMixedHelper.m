@@ -151,17 +151,12 @@ static const NSString *kRandomAlphabet = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 + (NSString *)randomWordPropertyName {
     NSMutableString *mstr = [[NSMutableString alloc] initWithCapacity:0];
     
-    [mstr appendString:[self randomWordWithIndex:1]];
-    [mstr appendString:[[self randomWordWithIndex:2] capitalizedString]];
-    
-    NSInteger lengthN = arc4random()%2+2;
-    for (int i = 0; i<lengthN ; i++) {
-        [mstr appendString:[[self randomWordWithIndex:0] capitalizedString]];
+    NSInteger lengthN = arc4random()%3;
+    if (lengthN == 0) {
+        [mstr appendString:[[self randomWordWithIndex:2] capitalizedString]];
     }
-    
-    if ([[mstr copy] containsString:@"-"]) {
-        NSLog(@"%@",[mstr copy]);
-    }
+    [mstr appendString:[[self randomWordWithIndex:0] capitalizedString]];
+    [mstr appendString:[[self randomWordWithIndex:0] capitalizedString]];
     
     return [mstr copy];
 }

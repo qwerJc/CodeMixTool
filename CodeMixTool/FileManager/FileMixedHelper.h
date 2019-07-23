@@ -97,8 +97,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)resaveFileWithOldFilePath:(NSString *)oldPath andNewFilePath:(NSString *)newPath;
 #pragma mark - 返回随机字符串
-+ (NSString *)randomWord;
-
++ (NSString *)randomWordWithIndex:(NSInteger)index;
 + (NSString *)randomWordPropertyName;
 + (NSString *)randomWordClassName;
 + (NSString *)randomWordMethodName;

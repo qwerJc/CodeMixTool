@@ -24,18 +24,23 @@ typedef NS_ENUM(NSUInteger, EnumCategoryReturnType) {
     EnumCategoryReturnType_NSDictionary,
 };
 
+// 属性类型
 typedef NS_ENUM(NSUInteger, EnumObjectType) {
-    EnumObjectType_Int = 0,
-    EnumObjectType_Float,
-    EnumObjectType_Double,
-    EnumObjectType_Char,
     EnumObjectType_NSInteger,
+    EnumObjectType_BOOL,
     
     EnumObjectType_NSObject,
     EnumObjectType_NSSet,
     EnumObjectType_NSArray,
     EnumObjectType_NSString,
     EnumObjectType_NSDictionary,
+    
+    EnumObjectType_UIView,
+    EnumObjectType_UILabel,
+    EnumObjectType_UIImageView,
+    EnumObjectType_ScrollView,
+    EnumObjectType_UITextField,
+    EnumObjectType_UITextView,
 };
 
 @interface SpamCodeTools : NSObject
@@ -45,6 +50,8 @@ typedef NS_ENUM(NSUInteger, EnumObjectType) {
 + (NSString *)getInitCodeWithClassIndex:(NSUInteger)index;
 + (NSString *)getReturnTypeWithIndex:(NSInteger)index;
 
+// 获取 垃圾属性名字
++ (NSString *)getPropertyNameWithIndex:(NSUInteger)index;
 /**
  获取 垃圾属性代码
 

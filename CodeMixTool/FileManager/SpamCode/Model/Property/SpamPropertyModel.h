@@ -10,30 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-//objectiveType_void = 0,
-//objectiveType_int,
-//objectiveType_float,
-//objectiveType_double,
-//objectiveType_NSInteger,
-
-typedef NS_ENUM(NSUInteger, objectiveType) {
-    objectiveType_void = 0,
-    objectiveType_int,
-    objectiveType_float,
-    objectiveType_double,
-    objectiveType_char,
-    objectiveType_NSInteger,
-    
-    objectiveType_NSObject,
-    objectiveType_NSSet,
-    objectiveType_NSArray,
-    objectiveType_NSString,
-    objectiveType_NSDictionary,
-};
-
 @interface SpamPropertyModel : NSObject
 @property (strong, nonatomic, readonly) NSString *propertyCode; // 属性代码
-@property (strong, nonatomic, readonly) NSString *getMethodCode; // 重写的get方法的代码
 @property (strong, nonatomic, readonly) NSString *setMethodCode; // 重写的get方法的代码
 @property (strong, nonatomic, readonly) NSString *callMethodCode; // 调用重写的get方法的代码
 

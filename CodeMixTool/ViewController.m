@@ -61,11 +61,15 @@
     [_arrData addObject:data4];
     
 //    [FileMixedHelper sharedHelper].projPath = @"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone.xcodeproj";
+//    [_txfProjPath setStringValue:@"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone.xcodeproj"];
 //    [FileMixedHelper sharedHelper].sourceCodePath = @"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone";
+//    [_txfCodePath setStringValue:@"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone"];
     
     // demo
     [FileMixedHelper sharedHelper].projPath = @"/Users/jiachen/demo/demo.xcodeproj";
+    [_txfProjPath setStringValue:@"/Users/jiachen/demo/demo.xcodeproj"];
     [FileMixedHelper sharedHelper].sourceCodePath = @"/Users/jiachen/demo/demo";
+    [_txfCodePath setStringValue:@"/Users/jiachen/demo/demo"];
 }
 
 - (void)createUI {
@@ -327,8 +331,8 @@
     FileManager *fileManager = [[FileManager alloc] init];
 
 //    [fileManager deleteUselessCode];
-    [fileManager randomClassName];
-//    [fileManager addSpamCodeWithOutPath:_txfSpamCodePath.stringValue];
+//    [fileManager randomClassName];
+    [fileManager addSpamCodeWithOutPath:_txfSpamCodePath.stringValue];
 }
 
 - (void)temp {

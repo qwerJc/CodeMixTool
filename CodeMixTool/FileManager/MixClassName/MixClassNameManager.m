@@ -30,8 +30,7 @@
     if ([FileMixedHelper sharedHelper].arrSonPath.count > 0){
         for (NSString *path in [FileMixedHelper sharedHelper].arrSonPath) {
             [self changeRandomClassNameWithCodeFilePath:path];
-            
-            
+          
         }
     } else {
         [self changeRandomClassNameWithCodeFilePath:[FileMixedHelper sharedHelper].sourceCodePath];
@@ -133,6 +132,7 @@
     
     [projectContent writeToFile:projContentPath atomically:YES encoding:NSUTF8StringEncoding error:nil];
     
+    // 如果存在多重.xcodeProj
     if ([[FileMixedHelper sharedHelper].arrLibraryProjPath count]>0) {
         for (NSString *path in [FileMixedHelper sharedHelper].arrLibraryProjPath) {
             NSString *libraryProjPath = [NSString stringWithFormat:@"%@/project.pbxproj",path];
