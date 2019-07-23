@@ -88,8 +88,10 @@ static const NSString *kRandomAlphabet = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
             continue;
         }
         
-        NSString *fileName = filePath.lastPathComponent;
-        if ([fileName hasSuffix:@".h"] || [fileName hasSuffix:@".m"] || [fileName hasSuffix:@".pch"] || [fileName hasSuffix:@".swift"] || [fileName hasSuffix:@".xib"] || [fileName hasSuffix:@".storyboard"]) {
+        NSString *fileName = filePath.lastPathComponent.stringByDeletingPathExtension;// 带.h 后缀 如：AppDelegate.h
+        NSString *fileExtension = filePath.pathExtension;
+        
+        if ([fileExtension isEqualToString:@"h"]||[fileExtension isEqualToString:@"m"]||[fileExtension isEqualToString:@"pch"]||[fileExtension isEqualToString:@"swift"]||[fileExtension isEqualToString:@"xib"]||[fileExtension isEqualToString:@"storyboard"]) {
             
             NSError *error = nil;
             NSMutableString *fileContent = [NSMutableString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:&error];
@@ -108,6 +110,15 @@ static const NSString *kRandomAlphabet = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
             [fileContent writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&error];
             if (error) {
                 printf("保存文件 %s 失败：%s\n", path.UTF8String, error.localizedDescription.UTF8String);
+            }
+            
+            // 判断是否存在重名的.h
+            if ([fileName isEqualToString:oldClassName]) {
+                
+                NSString *oldFilePath = [[sourceCodeDir stringByAppendingPathComponent:fileName] stringByAppendingPathExtension:fileExtension];
+                NSString *newFilePath = [[sourceCodeDir stringByAppendingPathComponent:newClassName] stringByAppendingPathExtension:fileExtension];
+                [self resaveFileWithOldFilePath:oldFilePath andNewFilePath:newFilePath];
+                
             }
         }
     }
