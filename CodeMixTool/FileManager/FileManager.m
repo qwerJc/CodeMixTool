@@ -11,6 +11,7 @@
 #import "MixClassNameManager.h"
 #import "SpamCodeCreateManager.h"
 #import "DeleteManager.h"
+#import "ModelLocator.h"
 
 @interface FileManager()
 
@@ -27,9 +28,9 @@
 #pragma mark - 删除无用代码
 - (void)deleteUselessCode {
     
-    [FileMixedHelper sharedHelper].modelDelete.isDeleteLineBreak = YES;
-    [FileMixedHelper sharedHelper].modelDelete.isDeleteAnnotation = YES;
-    [FileMixedHelper sharedHelper].modelDelete.isDeleteNSLog = YES;
+    model.modelDelete.isDeleteLineBreak = YES;
+    model.modelDelete.isDeleteAnnotation = YES;
+    model.modelDelete.isDeleteNSLog = YES;
     
     [self.managerDelete startDelete];
     NSLog(@"删除完成");
@@ -38,7 +39,7 @@
 #pragma mark - 混淆类名
 - (void)randomClassName {
 //    [FileMixedHelper sharedHelper].modelMixed.lengthRandomClassName = NSMakeRange(10, 10);
-    [FileMixedHelper sharedHelper].modelMixed.preName = @"JJC_";
+    model.modelMixed.preName = @"JJC_";
     
     self.managerMixClassName = [[MixClassNameManager alloc] init];
     
@@ -47,18 +48,18 @@
 
 #pragma mark - 添加垃圾代码
 - (void)addSpamCodeWithOutPath:(NSString *)outPath {
-    [FileMixedHelper sharedHelper].modelSpamCode.categoryName = @"LLiveRoom";
-    [FileMixedHelper sharedHelper].modelSpamCode.numMFileProperty = NSMakeRange(30, 30);
-    [FileMixedHelper sharedHelper].modelSpamCode.lengthMFilePropertyName = NSMakeRange(10, 20);
+    model.modelSpamCode.categoryName = @"LLiveRoom";
+    model.modelSpamCode.numMFileProperty = NSMakeRange(30, 30);
+    model.modelSpamCode.lengthMFilePropertyName = NSMakeRange(10, 20);
     
-    [FileMixedHelper sharedHelper].modelSpamCode.numCategoryProperty = NSMakeRange(30, 25);
-    [FileMixedHelper sharedHelper].modelSpamCode.lengthCategoryPropertyName = NSMakeRange(10, 20);
+    model.modelSpamCode.numCategoryProperty = NSMakeRange(30, 25);
+    model.modelSpamCode.lengthCategoryPropertyName = NSMakeRange(10, 20);
     
-    [FileMixedHelper sharedHelper].modelSpamCode.numCategoryProperty = NSMakeRange(30, 25);
-    [FileMixedHelper sharedHelper].modelSpamCode.lengthCategoryPropertyName = NSMakeRange(10, 20);
+    model.modelSpamCode.numCategoryProperty = NSMakeRange(30, 25);
+    model.modelSpamCode.lengthCategoryPropertyName = NSMakeRange(10, 20);
     
-    [FileMixedHelper sharedHelper].modelSpamCode.numCategoryMethod = NSMakeRange(30, 20);
-    [FileMixedHelper sharedHelper].modelSpamCode.lengthCategoryMethodName = NSMakeRange(15, 25);
+    model.modelSpamCode.numCategoryMethod = NSMakeRange(30, 20);
+    model.modelSpamCode.lengthCategoryMethodName = NSMakeRange(15, 25);
     
     self.managerSpamCode = [[SpamCodeCreateManager alloc] init];
     [self.managerSpamCode startAddSpamCode];

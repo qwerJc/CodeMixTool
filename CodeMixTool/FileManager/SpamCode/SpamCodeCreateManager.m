@@ -10,6 +10,7 @@
 #import "FileMixedHelper.h"
 #import "SpamPropertyModel.h"
 #import "SpamCategoryModel.h"
+#import "ModelLocator.h"
 
 @interface SpamCodeCreateManager ()
 @property (strong, nonatomic) SpamPropertyModel *modelPropertyCode;
@@ -21,26 +22,23 @@
 
 - (void)startAddSpamCode {
 
-    
-    
-    
     @autoreleasepool {
         
-        if ([FileMixedHelper sharedHelper].arrSonPath.count > 0){
-            for (NSString *path in [FileMixedHelper sharedHelper].arrSonPath) {
+        if (model.arrSonPath.count > 0){
+            for (NSString *path in model.arrSonPath) {
                 // 遍历全部文件，准备添加垃圾代码
                 [self addSpamCodeWithSourceCodeFilePath:path];
             }
         } else {
             // 遍历全部文件，准备添加垃圾代码
-            [self addSpamCodeWithSourceCodeFilePath:[FileMixedHelper sharedHelper].sourceCodePath];
+            [self addSpamCodeWithSourceCodeFilePath:model.sourceCodePath];
         }
     }
 }
 
 // 遍历全部文件
 - (void)addSpamCodeWithSourceCodeFilePath:(NSString *)sourceCodeDir {
-    NSString *projContentPath = [NSString stringWithFormat:@"%@/project.pbxproj",[FileMixedHelper sharedHelper].projPath];
+    NSString *projContentPath = [NSString stringWithFormat:@"%@/project.pbxproj",model.projPath];
     NSMutableString *projectContent = [NSMutableString stringWithContentsOfFile:projContentPath
                                                                        encoding:NSUTF8StringEncoding
                                                                           error:nil];
@@ -77,12 +75,12 @@
         }
         
         // 如果当前存在.h.m文件且不是Category
-        if ([fileExtension isEqualToString:@"h"] && [files containsObject:[fileName stringByAppendingPathExtension:@"m"]] && ![[FileMixedHelper sharedHelper].categoryFileSet containsObject:fileName]) {
+        if ([fileExtension isEqualToString:@"h"] && [files containsObject:[fileName stringByAppendingPathExtension:@"m"]] && ![model.categoryFileSet containsObject:fileName]) {
             
             // 在.m文件中 添加 垃圾代码
             [self addSpamCodeInMFileWithClassName:fileName andSourceCodePath:sourceCodeDir];
             
-            if ([FileMixedHelper sharedHelper].spamCodePath.length > 0) {
+            if (model.spamCodePath.length > 0) {
                 [self addSpamCategoryFileWithClassName:fileName andSourceCodeDir:sourceCodeDir];
             }
         }
@@ -100,19 +98,19 @@
     
     NSString *newMFileContent = [mFileContent copy];
     
-    _modelCategoryCode = [[SpamCategoryModel alloc] initWithPropertyNameLength:[FileMixedHelper sharedHelper].modelSpamCode.lengthCategoryPropertyName
-                                                                   PropertyNum:[FileMixedHelper sharedHelper].modelSpamCode.numCategoryProperty
-                                                               andMethodLength:[FileMixedHelper sharedHelper].modelSpamCode.lengthCategoryMethodName
-                                                                  andMethodNum:[FileMixedHelper sharedHelper].modelSpamCode.numCategoryMethod];
+    _modelCategoryCode = [[SpamCategoryModel alloc] initWithPropertyNameLength:model.modelSpamCode.lengthCategoryPropertyName
+                                                                   PropertyNum:model.modelSpamCode.numCategoryProperty
+                                                               andMethodLength:model.modelSpamCode.lengthCategoryMethodName
+                                                                  andMethodNum:model.modelSpamCode.numCategoryMethod];
     // 如果当前category文件不为空 则需要添加category文件的import
-    if (_modelCategoryCode && [FileMixedHelper sharedHelper].spamCodePath.length > 0) {
+    if (_modelCategoryCode && model.spamCodePath.length > 0) {
         newMFileContent = [self addCategoryImportWithMFileContent:newMFileContent
                                                      andClassName:className
-                                                  andCategoryName:[FileMixedHelper sharedHelper].modelSpamCode.categoryName];
+                                                  andCategoryName:model.modelSpamCode.categoryName];
     }
     
-    _modelPropertyCode = [[SpamPropertyModel alloc] initWithPropertyNameLength:[FileMixedHelper sharedHelper].modelSpamCode.lengthMFilePropertyName
-                                                                   PropertyNum:[FileMixedHelper sharedHelper].modelSpamCode.numMFileProperty];
+    _modelPropertyCode = [[SpamPropertyModel alloc] initWithPropertyNameLength:model.modelSpamCode.lengthMFilePropertyName
+                                                                   PropertyNum:model.modelSpamCode.numMFileProperty];
     if (_modelPropertyCode) {
         // 添加 interface 中的垃圾属性
         NSString *newInterfaceCode = [self addSpamPropertyCodeWithFileName:className andMFileContent:newMFileContent];
@@ -149,14 +147,14 @@
 - (void)addSpamCategoryFileWithClassName:(NSString *)className andSourceCodeDir:(NSString *)sourceCodeDir {
     
     // 创建.h文件
-    NSMutableString *hFileContent = [NSMutableString stringWithFormat:@"\n#import \"%@.h\"\n#import <UIKit/UIKit.h>\n\n@interface %@ (%@)\n%@\n%@\n@end",className,className,[FileMixedHelper sharedHelper].modelSpamCode.categoryName,_modelCategoryCode.propertyCode,_modelCategoryCode.hMethodCode];
+    NSMutableString *hFileContent = [NSMutableString stringWithFormat:@"\n#import \"%@.h\"\n#import <UIKit/UIKit.h>\n\n@interface %@ (%@)\n%@\n%@\n@end",className,className,model.modelSpamCode.categoryName,_modelCategoryCode.propertyCode,_modelCategoryCode.hMethodCode];
     
-    NSMutableString *mFileContent = [NSMutableString stringWithFormat:@"\n#import \"%@+%@.h\"\n\n@implementation %@ (%@)\n%@\n%@\n\n%@\n@end",className,[FileMixedHelper sharedHelper].modelSpamCode.categoryName,className,[FileMixedHelper sharedHelper].modelSpamCode.categoryName,_modelCategoryCode.callMethodCode,_modelCategoryCode.mMethodCode,_modelCategoryCode.getMethodCode];
+    NSMutableString *mFileContent = [NSMutableString stringWithFormat:@"\n#import \"%@+%@.h\"\n\n@implementation %@ (%@)\n%@\n%@\n\n%@\n@end",className,model.modelSpamCode.categoryName,className,model.modelSpamCode.categoryName,_modelCategoryCode.callMethodCode,_modelCategoryCode.mMethodCode,_modelCategoryCode.getMethodCode];
     
     
     if (hFileContent.length > 0) {
         NSError *error = nil;
-        NSString *savePath = [NSString stringWithFormat:@"%@%@+%@.h",[FileMixedHelper sharedHelper].spamCodePath,className,[FileMixedHelper sharedHelper].modelSpamCode.categoryName];
+        NSString *savePath = [NSString stringWithFormat:@"%@%@+%@.h",model.spamCodePath,className,model.modelSpamCode.categoryName];
         [hFileContent writeToFile:savePath atomically:YES encoding:NSUTF8StringEncoding error:&error];
         if (error) {
             NSLog(@"hFileConten 保存文件 失败：%@\n",error.localizedDescription);
@@ -167,7 +165,7 @@
     
     if (mFileContent.length > 0) {
         NSError *error = nil;
-        NSString *savePath = [NSString stringWithFormat:@"%@/%@+%@.m",[FileMixedHelper sharedHelper].spamCodePath,className,[FileMixedHelper sharedHelper].modelSpamCode.categoryName];
+        NSString *savePath = [NSString stringWithFormat:@"%@/%@+%@.m",model.spamCodePath,className,model.modelSpamCode.categoryName];
         [mFileContent writeToFile:savePath atomically:YES encoding:NSUTF8StringEncoding error:&error];
         if (error) {
             printf("mFileContent 保存文件 %s 失败：%s\n", sourceCodeDir.UTF8String, error.localizedDescription.UTF8String);

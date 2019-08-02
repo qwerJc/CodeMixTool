@@ -8,17 +8,18 @@
 
 #import "DeleteManager.h"
 #import "FileMixedHelper.h"
+#import "ModelLocator.h"
 
 @implementation DeleteManager
 
 - (void)startDelete {
     @autoreleasepool {
-        if ([FileMixedHelper sharedHelper].arrSonPath.count > 0){
-            for (NSString *path in [FileMixedHelper sharedHelper].arrSonPath) {
+        if (model.arrSonPath.count > 0){
+            for (NSString *path in model.arrSonPath) {
                 [self deleteWithWithFilePath:path];
             }
         } else {
-            [self deleteWithWithFilePath:[FileMixedHelper sharedHelper].sourceCodePath];
+            [self deleteWithWithFilePath:model.sourceCodePath];
         }
 
     }
@@ -38,7 +39,7 @@
         NSMutableString *fileContent = [NSMutableString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
         
         // 删除 注释
-        if ([FileMixedHelper sharedHelper].modelDelete.isDeleteAnnotation) {
+        if (model.modelDelete.isDeleteAnnotation) {
             [[FileMixedHelper sharedHelper] regularReplacement:fileContent regularExpression:@"([^:/*\"])//.*" newString:@"\\1"];
             //忽略1http://asdfff 2/// 3/*adddf*//*adaf*/ 4"//asdfasdf
             
@@ -46,13 +47,13 @@
         }
         
         // 删除 换行符
-        if ([FileMixedHelper sharedHelper].modelDelete.isDeleteLineBreak) {
+        if (model.modelDelete.isDeleteLineBreak) {
             [[FileMixedHelper sharedHelper] regularReplacement:fileContent regularExpression:@"/\\*{1,2}[\\s\\S]*?\\*/" newString:@""];
             [[FileMixedHelper sharedHelper] regularReplacement:fileContent regularExpression:@"^\\s*\\n" newString:@""];
         }
         
         // 删除 NSLog
-        if ([FileMixedHelper sharedHelper].modelDelete.isDeleteNSLog) {
+        if (model.modelDelete.isDeleteNSLog) {
             // 删除NSLog
             // NSLog[(]@[\S,\s]*?[)];  NSLog[(]@.*;
             [[FileMixedHelper sharedHelper] regularReplacement:fileContent regularExpression:@"NSLog[(]@[\\S,\\s]*?[)];" newString:@""];
@@ -61,8 +62,8 @@
         
         // 是否需要整合文件夹
         NSError *error;
-        if ([FileMixedHelper sharedHelper].modifyFileSavePath.length > 0) {
-            NSString *newPath = [NSString stringWithFormat:@"%@/%@",[FileMixedHelper sharedHelper].modifyFileSavePath,fileName];
+        if (model.modifyFileSavePath.length > 0) {
+            NSString *newPath = [NSString stringWithFormat:@"%@/%@",model.modifyFileSavePath,fileName];
             [fileContent writeToFile:newPath atomically:YES encoding:NSUTF8StringEncoding error:&error];
         } else {
             [fileContent writeToFile:filePath atomically:YES encoding:NSUTF8StringEncoding error:&error];
