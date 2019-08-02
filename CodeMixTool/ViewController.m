@@ -331,8 +331,8 @@
     FileManager *fileManager = [[FileManager alloc] init];
 
 //    [fileManager deleteUselessCode];
-    [fileManager randomClassName];
-//    [fileManager addSpamCodeWithOutPath:_txfSpamCodePath.stringValue];
+//    [fileManager randomClassName];
+    [fileManager addSpamCodeWithOutPath:_txfSpamCodePath.stringValue];
 }
 
 - (void)temp {

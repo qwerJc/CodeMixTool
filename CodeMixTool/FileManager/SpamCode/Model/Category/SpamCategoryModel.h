@@ -17,6 +17,7 @@ typedef NS_ENUM(NSUInteger, EnumMethodType) {
 
 @interface SpamCategoryModel : NSObject
 @property (strong, nonatomic, readonly) NSString *propertyCode; // 属性代码(.h)
+@property (strong, nonatomic, readonly) NSString *getMethodCode; // 重写的get方法的代码
 @property (strong, nonatomic, readonly) NSString *hMethodCode; // .h文件中方法声明
 @property (strong, nonatomic, readonly) NSString *mMethodCode; // .m文件中方法实现
 @property (strong, nonatomic, readonly) NSString *callMethodCode; // 方法调用

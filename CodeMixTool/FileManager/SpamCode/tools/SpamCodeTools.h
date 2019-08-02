@@ -45,6 +45,10 @@ typedef NS_ENUM(NSUInteger, EnumObjectType) {
 
 @interface SpamCodeTools : NSObject
 
+
++ (NSString *)addCallMethodWithTypeIndex:(NSInteger)index andPropertyName:(NSString *)propertyName;
++ (NSString *)addOverWriteGetMethodWithTypeIndex:(NSInteger)index andPropertyName:(NSString *)propertyName andCategoryName:(NSString *)categoryName;
+
 + (NSString *)getObjectiveTypeWithIndex:(NSUInteger)index;
 + (NSString *)getPropertyCodeWithIndex:(NSUInteger)index;
 + (NSString *)getInitCodeWithClassIndex:(NSUInteger)index;

@@ -20,13 +20,9 @@
 @implementation SpamCodeCreateManager
 
 - (void)startAddSpamCode {
-    _modelPropertyCode = [[SpamPropertyModel alloc] initWithPropertyNameLength:[FileMixedHelper sharedHelper].modelSpamCode.lengthMFilePropertyName
-                                                                   PropertyNum:[FileMixedHelper sharedHelper].modelSpamCode.numMFileProperty];
+
     
-    _modelCategoryCode = [[SpamCategoryModel alloc] initWithPropertyNameLength:[FileMixedHelper sharedHelper].modelSpamCode.lengthCategoryPropertyName
-                                                                   PropertyNum:[FileMixedHelper sharedHelper].modelSpamCode.numCategoryProperty
-                                                               andMethodLength:[FileMixedHelper sharedHelper].modelSpamCode.lengthCategoryMethodName
-                                                                  andMethodNum:[FileMixedHelper sharedHelper].modelSpamCode.numCategoryMethod];
+    
     
     @autoreleasepool {
         
@@ -104,6 +100,10 @@
     
     NSString *newMFileContent = [mFileContent copy];
     
+    _modelCategoryCode = [[SpamCategoryModel alloc] initWithPropertyNameLength:[FileMixedHelper sharedHelper].modelSpamCode.lengthCategoryPropertyName
+                                                                   PropertyNum:[FileMixedHelper sharedHelper].modelSpamCode.numCategoryProperty
+                                                               andMethodLength:[FileMixedHelper sharedHelper].modelSpamCode.lengthCategoryMethodName
+                                                                  andMethodNum:[FileMixedHelper sharedHelper].modelSpamCode.numCategoryMethod];
     // 如果当前category文件不为空 则需要添加category文件的import
     if (_modelCategoryCode && [FileMixedHelper sharedHelper].spamCodePath.length > 0) {
         newMFileContent = [self addCategoryImportWithMFileContent:newMFileContent
@@ -111,6 +111,8 @@
                                                   andCategoryName:[FileMixedHelper sharedHelper].modelSpamCode.categoryName];
     }
     
+    _modelPropertyCode = [[SpamPropertyModel alloc] initWithPropertyNameLength:[FileMixedHelper sharedHelper].modelSpamCode.lengthMFilePropertyName
+                                                                   PropertyNum:[FileMixedHelper sharedHelper].modelSpamCode.numMFileProperty];
     if (_modelPropertyCode) {
         // 添加 interface 中的垃圾属性
         NSString *newInterfaceCode = [self addSpamPropertyCodeWithFileName:className andMFileContent:newMFileContent];
@@ -149,7 +151,7 @@
     // 创建.h文件
     NSMutableString *hFileContent = [NSMutableString stringWithFormat:@"\n#import \"%@.h\"\n#import <UIKit/UIKit.h>\n\n@interface %@ (%@)\n%@\n%@\n@end",className,className,[FileMixedHelper sharedHelper].modelSpamCode.categoryName,_modelCategoryCode.propertyCode,_modelCategoryCode.hMethodCode];
     
-    NSMutableString *mFileContent = [NSMutableString stringWithFormat:@"\n#import \"%@+%@.h\"\n\n@implementation %@ (%@)\n%@\n%@\n@end",className,[FileMixedHelper sharedHelper].modelSpamCode.categoryName,className,[FileMixedHelper sharedHelper].modelSpamCode.categoryName,_modelCategoryCode.mMethodCode,_modelCategoryCode.callMethodCode];
+    NSMutableString *mFileContent = [NSMutableString stringWithFormat:@"\n#import \"%@+%@.h\"\n\n@implementation %@ (%@)\n%@\n%@\n\n%@\n@end",className,[FileMixedHelper sharedHelper].modelSpamCode.categoryName,className,[FileMixedHelper sharedHelper].modelSpamCode.categoryName,_modelCategoryCode.callMethodCode,_modelCategoryCode.mMethodCode,_modelCategoryCode.getMethodCode];
     
     
     if (hFileContent.length > 0) {
