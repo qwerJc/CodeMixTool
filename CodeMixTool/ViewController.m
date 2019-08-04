@@ -61,10 +61,15 @@
     [_arrData addObject:data3];
     [_arrData addObject:data4];
     
-    model.projPath = @"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone.xcodeproj";
-    [_txfProjPath setStringValue:@"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone.xcodeproj"];
-    model.sourceCodePath = @"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone";
-    [_txfCodePath setStringValue:@"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone"];
+//    model.projPath = @"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone.xcodeproj";
+//    [_txfProjPath setStringValue:@"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone.xcodeproj"];
+//    model.sourceCodePath = @"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone";
+//    [_txfCodePath setStringValue:@"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone"];
+    
+    
+    // home
+    model.projPath = @"/Users/jiachen/Desktop/xiuchang_iPhone/v6cn-iPhone.xcodeproj";
+    model.sourceCodePath = @"/Users/jiachen/Desktop/xiuchang_iPhone/v6cn-iPhone";
     
     // demo
 //    [FileMixedHelper sharedHelper].projPath = @"/Users/jiachen/demo/demo.xcodeproj";

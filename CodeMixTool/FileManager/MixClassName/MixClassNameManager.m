@@ -20,17 +20,74 @@
 - (void)startMixed {
     
     _semaphore = dispatch_semaphore_create(0);
-    if (model.arrSonPath.count > 0){
-        for (NSString *path in model.arrSonPath) {
-            [self changeRandomClassNameWithCodeFilePath:path];
-          
-        }
-    } else {
-        [self changeRandomClassNameWithCodeFilePath:model.sourceCodePath];
-    }
+//    if (model.arrSonPath.count > 0){
+//        for (NSString *path in model.arrSonPath) {
+//            [self changeRandomClassNameWithCodeFilePath:path];
+//
+//        }
+//    } else {
+//        [self changeRandomClassNameWithCodeFilePath:model.sourceCodePath];
+//    }
+    [self newChangeRandomClassName];
 }
 
 #pragma mark - Private
+- (void)newChangeRandomClassName {
+    for (NSString *path in model.arrFilePath) {
+        @autoreleasepool {
+            NSString *fileName = path.lastPathComponent.stringByDeletingPathExtension;
+            NSString *fileExtension = path.pathExtension;
+            NSString *fileDirPath = [path stringByDeletingLastPathComponent];// path文件所属的上一级文件夹路径
+            NSFileManager *fm = [NSFileManager defaultManager];
+            NSArray<NSString *> *files = [fm contentsOfDirectoryAtPath:fileDirPath error:nil];
+            NSString *newClassName;
+
+            // 当前为.h文件 且 为可以更改的文件（不是AppDelegate,ViewController等）
+            if (![model.categoryFileSet containsObject:fileName] && [[FileMixedHelper sharedHelper] isNeedChangedFileName:fileName]) {
+
+                // 当前为.h文件且同级目录下有对应的.m文件
+                if ([fileExtension isEqualToString:@"h"] && [files containsObject:[fileName stringByAppendingPathExtension:@"m"]]) {
+                    newClassName = [self getNewClassNameWithOldClassName:fileName];
+
+                    // 若当前的.h文件存在对应的.m文件
+                    NSString *mFileName = [fileName stringByAppendingPathExtension:@"m"];
+                    if ([files containsObject:mFileName]) {
+                        NSLog(@"fileName : %@ -> %@",fileName,newClassName);
+
+                        NSString *oldFilePath = [[fileDirPath stringByAppendingPathComponent:fileName] stringByAppendingPathExtension:@"h"];
+                        NSString *newFilePath = [[fileDirPath stringByAppendingPathComponent:newClassName] stringByAppendingPathExtension:@"h"];
+                        [[FileMixedHelper sharedHelper] resaveFileWithOldFilePath:oldFilePath andNewFilePath:newFilePath];
+
+                        oldFilePath = [[fileDirPath stringByAppendingPathComponent:fileName] stringByAppendingPathExtension:@"m"];
+                        newFilePath = [[fileDirPath stringByAppendingPathComponent:newClassName] stringByAppendingPathExtension:@"m"];
+                        [[FileMixedHelper sharedHelper] resaveFileWithOldFilePath:oldFilePath andNewFilePath:newFilePath];
+
+                        oldFilePath = [[fileDirPath stringByAppendingPathComponent:fileName] stringByAppendingPathExtension:@"xib"];
+
+                        if ([fm fileExistsAtPath:oldFilePath]) {
+                            newFilePath = [[fileDirPath stringByAppendingPathComponent:newClassName] stringByAppendingPathExtension:@"xib"];
+                            [[FileMixedHelper sharedHelper] resaveFileWithOldFilePath:oldFilePath andNewFilePath:newFilePath];
+                        }
+
+                        // 遍历所有工程文件，替换类名
+                        @autoreleasepool {
+                            [self modifyFilesClassNameWithSourceCodeDir:model.sourceCodePath
+                                                        andOldClassName:fileName
+                                                        andNewClassName:newClassName];
+                        }
+
+                        // 替换 引用文件中的类名
+                        @autoreleasepool {
+                            [self changeFileNameInProject_pbxprojWithOldClassName:fileName andNewClassName:newClassName];
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+}
+
 - (void)changeRandomClassNameWithCodeFilePath:(NSString *)pathCodeFile {
 
     NSFileManager *fm = [NSFileManager defaultManager];

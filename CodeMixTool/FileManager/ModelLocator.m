@@ -37,13 +37,73 @@
     self.modelSpamCode = [[SpamCodeFunctionModel alloc] init];
     self.modelMixed = [[MixedFunctionModel alloc] init];
     
-    _categoryFileSet = [[NSMutableSet alloc] initWithCapacity:0];
+    
     _ignorePath = @"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone/ThirdParty_Components/";
 }
 
 #pragma mark - setup
 - (void)setup {
-    [self setupWithCategory:_sourceCodePath];
+//    [self setupWithCategory:_sourceCodePath];
+//    NSLog(@"%@",_categoryFileSet);
+    
+    [self setupAllFilePath];
+    
+    [self getALlCategory];
+}
+
+- (void)setupAllFilePath {
+    _arrFilePath = [NSMutableArray arrayWithCapacity:0];
+    [self findFileWithPath:_sourceCodePath];
+}
+
+- (void)findFileWithPath:(NSString *)path {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    // 遍历源代码文件 h 与 m 配对，swift
+    NSArray<NSString *> *files = [fm contentsOfDirectoryAtPath:path error:nil];
+    BOOL isDirectory;
+    
+    for (NSString *file in files) { // filePath
+        NSString *filePath = [path stringByAppendingPathComponent:file];
+        // 如果当前path对应的是文件夹
+        if ([fm fileExistsAtPath:filePath isDirectory:&isDirectory] && isDirectory) {
+            [self findFileWithPath:filePath];
+            continue;
+        }
+        [_arrFilePath addObject:filePath];
+    }
+}
+
+- (void)getALlCategory {
+    NSLog(@"11");
+    _categoryFileSet = [[NSMutableSet alloc] initWithCapacity:0];
+    
+    int i = 0;
+    
+    for (NSString *path in _arrFilePath) {
+//        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+//
+//        });
+        NSString *fileName = path.lastPathComponent.stringByDeletingPathExtension; //类名：JJCView
+        NSString *fileExtension = path.pathExtension; // h/m 文件
+
+        // 获取文件名带+且后缀为.h或.m的
+        if ([fileName containsString:@"+"] && ([fileExtension isEqualToString:@"h"] || [fileExtension isEqualToString:@"m"])) {
+            // category 所拓展的类名q
+            NSUInteger index = [fileName rangeOfString:@"+"].location;
+            NSString *className = [fileName substringToIndex:index];
+
+            if (![_categoryFileSet containsObject:fileName]) {
+                [_categoryFileSet addObject:fileName];
+                NSLog(@"%i : %@",i++,fileName);
+            }
+            
+            if (![_categoryFileSet containsObject:className]) {
+                [_categoryFileSet addObject:className];
+                NSLog(@"%i : %@",i++,className);
+            }
+        }
+    }
     NSLog(@"%@",_categoryFileSet);
 }
 
