@@ -11,7 +11,6 @@
 #import "FileMixedHelper.h"
 
 @interface IntegrateManager()
-@property (assign, nonatomic) BOOL isDelIntegratedFile;     // 是否需要删除替换的文件
 @property (assign, nonatomic) BOOL isDelSumDir;             // 是否删除替换的文件夹
 @property (assign, nonatomic) BOOL isJudgeInProject;        // 是否判读当前文件在项目中
 @end
@@ -25,11 +24,9 @@
     isDelIntegratedFile 为Yes 只会删除引入过的文件
     isDelSumDir         为Yes 会删除全部的文件夹
  */
-- (void)setupWithIsDelIntegratedFile:(BOOL)isDelIntegratedFile
-               isDelIntegratedSumDir:(BOOL)isDelSumDir
+- (void)setupWithIsDelIntegratedSumDir:(BOOL)isDelSumDir
                     isJudgeInProject:(BOOL)isJudgeInProject {
     
-    _isDelIntegratedFile = isDelIntegratedFile;
     _isDelSumDir = isDelSumDir;
     _isJudgeInProject = isJudgeInProject;
 }
@@ -41,6 +38,8 @@
     
     BOOL isTotalSuccess = YES; // 是否全部文件整合成功
     
+    NSMutableArray *arrDuplicationFileName = [NSMutableArray arrayWithCapacity:0];
+    
     for (NSString *path in [model.msetModifyFilePath copy]) {
         NSString *fileName = path.lastPathComponent.stringByDeletingPathExtension;
         NSString *fileExtension = path.pathExtension;
@@ -48,15 +47,23 @@
         // 判断projectContent是否包含
         if ([self judgeIsProjContentContainFileWithFileName:[fileName stringByAppendingPathExtension:fileExtension]]) {
             
+            NSError *errorMove;
+            NSString *newPath = [[NSString stringWithFormat:@"%@/%@",model.modifyFileSavePath,fileName] stringByAppendingPathExtension:fileExtension];
             
-            BOOL isSaveSuccess;
-            isSaveSuccess = [self saveFileWithOldFilePath:path];
+            errorMove = [self moveFileWithOldFilePath:path andNewFilePath:newPath];
             
-            if (isSaveSuccess) {
-                 NSLog(@"%@ 整合完成",fileName);
-            } else {
+            if (errorMove) {
                 isTotalSuccess = NO;
-                break;
+                if (errorMove.code == 516) {
+                    // 重复文件
+                    [arrDuplicationFileName addObject:fileName];
+                } else {
+                    // 其他错误
+                    [FileMixedHelper showAlert:@"【整合】 - 移动文件 失败" andDetailString:errorMove.localizedDescription];
+                    break;
+                }
+            } else {
+                NSLog(@"【整合】 - %@ 文件 移动成功",path);
             }
         }
     }
@@ -64,6 +71,11 @@
     // 判断是否需要删除旧的文件夹
     if (isTotalSuccess) {
         [self judgeIsNeedDelSumDir];
+    } else {
+        if (arrDuplicationFileName.count > 0) {
+            NSLog(@"【存在重名文件】");
+            NSLog(@"%@",[arrDuplicationFileName copy]);
+        }
     }
     
 }
@@ -88,40 +100,20 @@
     }
 }
 
-- (BOOL)saveFileWithOldFilePath:(NSString *)path {
-    NSString *fileName = path.lastPathComponent.stringByDeletingPathExtension;
-    NSString *fileExtension = path.pathExtension;
-    NSString *newPath = [[NSString stringWithFormat:@"%@/%@",model.modifyFileSavePath,fileName] stringByAppendingPathExtension:fileExtension];
+- (NSError *)moveFileWithOldFilePath:(NSString *)oldPath andNewFilePath:(NSString *)newPath {
+    NSError *errorMove = nil;
     
-    NSMutableString *fileContent = [NSMutableString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-    NSError *errorSave = nil;
-    // 是否需要整合文件夹
+    NSFileManager *fm = [NSFileManager defaultManager];
+    [fm moveItemAtPath:oldPath toPath:newPath error:&errorMove];
     
-    [fileContent writeToFile:newPath atomically:YES encoding:NSUTF8StringEncoding error:&errorSave];
-    
-    if (errorSave) {
-        [FileMixedHelper showAlert:@"【整合】 - 保存新文件 失败" andDetailString:errorSave.localizedDescription];
-        return NO;
-    } else {
-        if (_isDelIntegratedFile) {
-            NSError *errorDel = nil;
-            NSFileManager *fm = [NSFileManager defaultManager];
-            [fm removeItemAtPath:path error:&errorDel];
-            
-            [fm moveItemAtPath:<#(nonnull NSString *)#> toPath:<#(nonnull NSString *)#> error:<#(NSError * _Nullable __autoreleasing * _Nullable)#>]
-            if (errorDel) {
-                NSLog(@"%@ 整合完成 - 删除旧文件失败，需要手动删除 \n error:%@",fileName,errorDel.localizedDescription);
-                
-                
-            } else {
-                NSLog(@"%@ 整合完成",fileName);
-            }
-        } else {
-            NSLog(@"%@ 整合完成",fileName);
-        }
-        
-        return YES;
-    }
+    return errorMove;
+//    if (errorMove) {
+//
+//        return NO;
+//    } else {
+//
+//        return YES;
+//    }
 }
 
 /**

@@ -70,8 +70,7 @@
 
 #pragma mark - 整合代码文件
 - (void)modifyCodeFile {
-    [self.managerIntegrate setupWithIsDelIntegratedFile:YES
-                                  isDelIntegratedSumDir:NO
+    [self.managerIntegrate setupWithIsDelIntegratedSumDir:NO
                                        isJudgeInProject:YES];
     
     [self.managerIntegrate startIntegrateFile];

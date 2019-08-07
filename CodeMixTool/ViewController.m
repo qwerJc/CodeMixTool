@@ -262,7 +262,7 @@
     
     NSOpenPanel *oPanel = [NSOpenPanel openPanel];
     [oPanel setCanChooseDirectories:YES]; //可以打开目录
-    [oPanel setCanChooseFiles:YES]; //不能打开文件(我需要处理一个目录内的所有文件)
+    [oPanel setCanChooseFiles:NO]; //不能打开文件(我需要处理一个目录内的所有文件)
     [oPanel setAllowsMultipleSelection:YES];//是否允许多选file
     NSInteger finded = [oPanel runModal]; //获取panel的响应
     

@@ -73,8 +73,8 @@
     
     for (NSString *file in files) { // filePath
         NSString *filePath = [path stringByAppendingPathComponent:file];
-        // 如果当前path对应的是文件夹
-        if ([fm fileExistsAtPath:filePath isDirectory:&isDirectory] && isDirectory) {
+        // 如果当前path对应的是文件夹 （这里bundle文件也会被认做是文件夹，排除bundl,否则整合动画文件时会有问题）
+        if ([fm fileExistsAtPath:filePath isDirectory:&isDirectory] && isDirectory && ![filePath.pathExtension isEqualToString:@"bundle"]) {
             [self setupModifyFilePath:filePath];
             continue;
         }
