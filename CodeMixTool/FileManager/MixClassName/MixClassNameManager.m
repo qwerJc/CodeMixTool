@@ -33,7 +33,9 @@
 
 #pragma mark - Private
 - (void)newChangeRandomClassName {
-    for (NSString *path in model.arrFilePath) {
+    
+    NSLog(@"%@",[model.msetModifyFilePath copy]);
+    for (NSString *path in [model.msetModifyFilePath copy]) {
         @autoreleasepool {
             NSString *fileName = path.lastPathComponent.stringByDeletingPathExtension;
             NSString *fileExtension = path.pathExtension;

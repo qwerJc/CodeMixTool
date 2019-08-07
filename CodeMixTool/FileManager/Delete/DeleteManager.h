@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DeleteManager : NSObject
 - (void)startDelete;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -59,7 +59,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic) NSString *projPath;                   // .xcodeProj 文件路径
 @property (copy, nonatomic) NSArray<NSString *> *arrLibraryProjPath;  // .xcodeProj 文件路径
 
-@property (copy, nonatomic) NSMutableArray<NSString *> *arrFilePath;     // 存放所有文件路径
+@property (copy, nonatomic) NSMutableSet<NSString *> *msetSumFilePath;         // 存放总的所有文件路径
+@property (copy, nonatomic) NSMutableSet<NSString *> *msetModifyFilePath;      // 存放待修改的所有文件路径
 
 @property (strong, nonatomic) NSString *sourceCodePath;               // 代码文件总路径
 @property (copy, nonatomic) NSArray<NSString *> *arrSonPath;        // 子路径
@@ -72,7 +73,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setup;
 
-- (void)log;
 @end
 
 

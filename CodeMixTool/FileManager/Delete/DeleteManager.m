@@ -21,7 +21,6 @@
         } else {
             [self deleteWithWithFilePath:model.sourceCodePath];
         }
-
     }
 }
 
@@ -59,21 +58,8 @@
             [[FileMixedHelper sharedHelper] regularReplacement:fileContent regularExpression:@"NSLog[(]@[\\S,\\s]*?[)];" newString:@""];
             
         }
-        
-        // 是否需要整合文件夹
-        NSError *error;
-        if (model.modifyFileSavePath.length > 0) {
-            NSString *newPath = [NSString stringWithFormat:@"%@/%@",model.modifyFileSavePath,fileName];
-            [fileContent writeToFile:newPath atomically:YES encoding:NSUTF8StringEncoding error:&error];
-        } else {
-            [fileContent writeToFile:filePath atomically:YES encoding:NSUTF8StringEncoding error:&error];
-        }
-        
-        if (error) {
-            [FileMixedHelper showAlert:@"删除错误" andDetailString:error.localizedDescription];
-        }
+
     }
 }
-
 
 @end

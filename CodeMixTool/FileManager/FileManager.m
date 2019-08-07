@@ -12,6 +12,7 @@
 #import "SpamCodeCreateManager.h"
 #import "DeleteManager.h"
 #import "ModelLocator.h"
+#import "IntegrateManager.h"
 
 @interface FileManager()
 
@@ -20,6 +21,8 @@
 @property (strong, nonatomic) MixClassNameManager *managerMixClassName; // 类名修改Manager
 
 @property (strong, nonatomic) SpamCodeCreateManager *managerSpamCode;   // 添加垃圾代码Manager
+
+@property (strong, nonatomic) IntegrateManager *managerIntegrate;       // 代码整合Manager
 @end
 
 @implementation FileManager
@@ -65,6 +68,14 @@
     [self.managerSpamCode startAddSpamCode];
 }
 
+#pragma mark - 整合代码文件
+- (void)modifyCodeFile {
+    [self.managerIntegrate setupWithIsDelIntegratedFile:YES
+                                  isDelIntegratedSumDir:NO
+                                       isJudgeInProject:YES];
+    
+    [self.managerIntegrate startIntegrateFile];
+}
 
 #pragma mark - Lazy Load
 - (DeleteManager *)managerDelete {
@@ -73,4 +84,12 @@
     }
     return _managerDelete;
 }
+
+- (IntegrateManager *)managerIntegrate {
+    if (!_managerIntegrate) {
+        _managerIntegrate = [[IntegrateManager alloc] init];
+    }
+    return _managerIntegrate;
+}
+
 @end

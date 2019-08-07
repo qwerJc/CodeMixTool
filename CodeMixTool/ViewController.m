@@ -61,15 +61,15 @@
     [_arrData addObject:data3];
     [_arrData addObject:data4];
     
-//    model.projPath = @"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone.xcodeproj";
-//    [_txfProjPath setStringValue:@"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone.xcodeproj"];
-//    model.sourceCodePath = @"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone";
-//    [_txfCodePath setStringValue:@"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone"];
+    model.projPath = @"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone.xcodeproj";
+    [_txfProjPath setStringValue:@"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone.xcodeproj"];
+    model.sourceCodePath = @"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone";
+    [_txfCodePath setStringValue:@"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone"];
     
     
     // home
-    model.projPath = @"/Users/jiachen/Desktop/xiuchang_iPhone/v6cn-iPhone.xcodeproj";
-    model.sourceCodePath = @"/Users/jiachen/Desktop/xiuchang_iPhone/v6cn-iPhone";
+//    model.projPath = @"/Users/jiachen/Desktop/xiuchang_iPhone/v6cn-iPhone.xcodeproj";
+//    model.sourceCodePath = @"/Users/jiachen/Desktop/xiuchang_iPhone/v6cn-iPhone";
     
     // demo
 //    [FileMixedHelper sharedHelper].projPath = @"/Users/jiachen/demo/demo.xcodeproj";
@@ -159,10 +159,17 @@
     [_txfIgnoreWord setBezeled:NO];
     [self.view addSubview:_txfIgnoreWord];
     
-    NSButton *btnRun = [NSButton buttonWithTitle:@"Run" target:self action:@selector(onRunAction)];
-    btnRun.frame = CGRectMake(50, 50, 200, 100);
-    [self.view addSubview:btnRun];
+    NSButton *btnRunMix = [NSButton buttonWithTitle:@"类名混淆" target:self action:@selector(onMixAction)];
+    btnRunMix.frame = CGRectMake(50, 50, 150, 60);
+    [self.view addSubview:btnRunMix];
     
+    NSButton *btnRunDel = [NSButton buttonWithTitle:@"删除" target:self action:@selector(onDelAction)];
+    btnRunDel.frame = CGRectMake(220, 50, 150, 60);
+    [self.view addSubview:btnRunDel];
+    
+    NSButton *btnRunModify = [NSButton buttonWithTitle:@"整合" target:self action:@selector(onModifyAction)];
+    btnRunModify.frame = CGRectMake(400, 50, 150, 60);
+    [self.view addSubview:btnRunModify];
 }
 
 #pragma mark - BtnAction
@@ -323,6 +330,15 @@
 
 - (void)onRunAction {
     
+    
+    
+    
+//
+    
+//    [fileManager addSpamCodeWithOutPath:_txfSpamCodePath.stringValue];
+}
+
+- (void)onMixAction {
     [model setup];
     
     // 读取忽略的类名
@@ -330,21 +346,44 @@
     NSMutableSet *mset = [NSMutableSet setWithArray:arrIgnoreClassName];
     model.ignoreClassNamesSet = [mset copy];
     
-    NSLog(@"=========================");
-//    [[FileMixedHelper sharedHelper] getAllCategoryFileClassNameWithSourceCodeDir:model.sourceCodePath];
-    NSLog(@"111：%@",model.categoryFileSet);
-    
-    [model log];
-    NSLog(@"222： andNum :%@",model.categoryFileSet);
-    NSLog(@"=========================");
-
     FileManager *fileManager = [[FileManager alloc] init];
-
-//    [fileManager deleteUselessCode];
     [fileManager randomClassName];
-//    [fileManager addSpamCodeWithOutPath:_txfSpamCodePath.stringValue];
 }
 
+- (void)onDelAction {
+    [model setup];
+    
+    // 读取忽略的类名
+    NSArray *arrIgnoreClassName = [_txfIgnoreWord.stringValue componentsSeparatedByString:@","];
+    NSMutableSet *mset = [NSMutableSet setWithArray:arrIgnoreClassName];
+    model.ignoreClassNamesSet = [mset copy];
+    
+    FileManager *fileManager = [[FileManager alloc] init];
+    [fileManager deleteUselessCode];
+}
+
+- (void)onModifyAction {
+    [model setup];
+    
+    // 读取忽略的类名
+    NSArray *arrIgnoreClassName = [_txfIgnoreWord.stringValue componentsSeparatedByString:@","];
+    NSMutableSet *mset = [NSMutableSet setWithArray:arrIgnoreClassName];
+    model.ignoreClassNamesSet = [mset copy];
+    
+    FileManager *fileManager = [[FileManager alloc] init];
+    [fileManager modifyCodeFile];
+}
+
+- (void)onAddSpamCodeAction {
+    [model setup];
+    // 读取忽略的类名
+    NSArray *arrIgnoreClassName = [_txfIgnoreWord.stringValue componentsSeparatedByString:@","];
+    NSMutableSet *mset = [NSMutableSet setWithArray:arrIgnoreClassName];
+    model.ignoreClassNamesSet = [mset copy];
+    
+    FileManager *fileManager = [[FileManager alloc] init];
+    [fileManager addSpamCodeWithOutPath:_txfSpamCodePath.stringValue];
+}
 - (void)setRepresentedObject:(id)representedObject {
     [super setRepresentedObject:representedObject];
 

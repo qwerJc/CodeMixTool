@@ -13,6 +13,7 @@
 
 @implementation ModelLocator
 
+#pragma mark - Init 
 +(instancetype)sharedModelLocator {
     static ModelLocator *m;
     static dispatch_once_t onceToken;
@@ -41,22 +42,29 @@
     _ignorePath = @"/Users/jiachen/xiuchang_iPhone/greenhouse-iPhone/ThirdParty_Components/";
 }
 
-#pragma mark - setup
 - (void)setup {
-//    [self setupWithCategory:_sourceCodePath];
-//    NSLog(@"%@",_categoryFileSet);
-    
-    [self setupAllFilePath];
+    [self setupFilePath];
     
     [self getALlCategory];
 }
 
-- (void)setupAllFilePath {
-    _arrFilePath = [NSMutableArray arrayWithCapacity:0];
-    [self findFileWithPath:_sourceCodePath];
+#pragma mark - setup FilePath
+- (void)setupFilePath {
+    _msetSumFilePath = [NSMutableSet setWithCapacity:0];
+    _msetModifyFilePath = [NSMutableSet setWithCapacity:0];
+    
+    if (_arrSonPath.count > 0) {
+        for (NSString *path in model.arrSonPath) {
+            [self setupModifyFilePath:path];
+        }
+        [self setupSumFilePath:_sourceCodePath];
+    } else {
+        [self setupSumFilePath:_sourceCodePath];
+        _msetModifyFilePath = _msetSumFilePath;
+    }
 }
 
-- (void)findFileWithPath:(NSString *)path {
+- (void)setupModifyFilePath:(NSString *)path {
     NSFileManager *fm = [NSFileManager defaultManager];
     
     // 遍历源代码文件 h 与 m 配对，swift
@@ -67,23 +75,37 @@
         NSString *filePath = [path stringByAppendingPathComponent:file];
         // 如果当前path对应的是文件夹
         if ([fm fileExistsAtPath:filePath isDirectory:&isDirectory] && isDirectory) {
-            [self findFileWithPath:filePath];
+            [self setupModifyFilePath:filePath];
             continue;
         }
-        [_arrFilePath addObject:filePath];
+        [_msetModifyFilePath addObject:filePath];
     }
 }
 
+- (void)setupSumFilePath:(NSString *)path {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    // 遍历源代码文件 h 与 m 配对，swift
+    NSArray<NSString *> *files = [fm contentsOfDirectoryAtPath:path error:nil];
+    BOOL isDirectory;
+    
+    for (NSString *file in files) { // filePath
+        NSString *filePath = [path stringByAppendingPathComponent:file];
+        // 如果当前path对应的是文件夹
+        if ([fm fileExistsAtPath:filePath isDirectory:&isDirectory] && isDirectory) {
+            [self setupSumFilePath:filePath];
+            continue;
+        }
+        [_msetSumFilePath addObject:filePath];
+    }
+}
+
+#pragma mark - Get Category
 - (void)getALlCategory {
-    NSLog(@"11");
     _categoryFileSet = [[NSMutableSet alloc] initWithCapacity:0];
     
-    int i = 0;
-    
-    for (NSString *path in _arrFilePath) {
-//        dispatch_async(dispatch_get_global_queue(0, 0), ^{
-//
-//        });
+    for (NSString *path in [_msetSumFilePath copy]) {
+
         NSString *fileName = path.lastPathComponent.stringByDeletingPathExtension; //类名：JJCView
         NSString *fileExtension = path.pathExtension; // h/m 文件
 
@@ -95,59 +117,50 @@
 
             if (![_categoryFileSet containsObject:fileName]) {
                 [_categoryFileSet addObject:fileName];
-                NSLog(@"%i : %@",i++,fileName);
             }
             
             if (![_categoryFileSet containsObject:className]) {
                 [_categoryFileSet addObject:className];
-                NSLog(@"%i : %@",i++,className);
             }
         }
     }
     NSLog(@"%@",_categoryFileSet);
 }
 
-- (void)log {
-    NSLog(@"==");
-    NSLog(@"%@",_categoryFileSet);
-    NSLog(@"==");
-    NSLog(@"%@",model.categoryFileSet);
-    NSLog(@"==");
-}
-- (void)setupWithCategory:(NSString *)sourceCodeFilePath {
-    NSFileManager *fm = [NSFileManager defaultManager];
-    
-    // 遍历源代码文件 h 与 m 配对，swift
-    NSArray<NSString *> *files = [fm contentsOfDirectoryAtPath:sourceCodeFilePath error:nil];
-    BOOL isDirectory;
-    
-    for (NSString *file in files) { // filePath
-        NSString *filePath = [sourceCodeFilePath stringByAppendingPathComponent:file];
-        if ([fm fileExistsAtPath:filePath isDirectory:&isDirectory] && isDirectory) {
-            [self setupWithCategory:filePath];
-            continue;
-        }
-        
-        NSString *fileName = file.lastPathComponent.stringByDeletingPathExtension; //类名：JJCView
-        NSString *fileExtension = file.pathExtension; // h/m 文件
-        
-        if ([fileExtension isEqualToString:@"h"] || [fileExtension isEqualToString:@"m"]) {
-            // 获取文件名带+的
-            if ([fileName containsString:@"+"]) {
-                // 带+（category的方法）
-                [_categoryFileSet addObject:fileName];
-                
-                // category 所拓展的类名q
-                NSUInteger index = [fileName rangeOfString:@"+"].location;
-                NSString *className = [fileName substringToIndex:index];
-                
-                if (![_categoryFileSet containsObject:className]) {
-                    [_categoryFileSet addObject:className];
-                }
-            }
-        }
-    }
-}
+//- (void)setupWithCategory:(NSString *)sourceCodeFilePath {
+//    NSFileManager *fm = [NSFileManager defaultManager];
+//
+//    // 遍历源代码文件 h 与 m 配对，swift
+//    NSArray<NSString *> *files = [fm contentsOfDirectoryAtPath:sourceCodeFilePath error:nil];
+//    BOOL isDirectory;
+//
+//    for (NSString *file in files) { // filePath
+//        NSString *filePath = [sourceCodeFilePath stringByAppendingPathComponent:file];
+//        if ([fm fileExistsAtPath:filePath isDirectory:&isDirectory] && isDirectory) {
+//            [self setupWithCategory:filePath];
+//            continue;
+//        }
+//
+//        NSString *fileName = file.lastPathComponent.stringByDeletingPathExtension; //类名：JJCView
+//        NSString *fileExtension = file.pathExtension; // h/m 文件
+//
+//        if ([fileExtension isEqualToString:@"h"] || [fileExtension isEqualToString:@"m"]) {
+//            // 获取文件名带+的
+//            if ([fileName containsString:@"+"]) {
+//                // 带+（category的方法）
+//                [_categoryFileSet addObject:fileName];
+//
+//                // category 所拓展的类名q
+//                NSUInteger index = [fileName rangeOfString:@"+"].location;
+//                NSString *className = [fileName substringToIndex:index];
+//
+//                if (![_categoryFileSet containsObject:className]) {
+//                    [_categoryFileSet addObject:className];
+//                }
+//            }
+//        }
+//    }
+//}
 @end
 
 // 删除功能Model

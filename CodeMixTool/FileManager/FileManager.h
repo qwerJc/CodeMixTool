@@ -20,6 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - 添加垃圾代码
 - (void)addSpamCodeWithOutPath:(NSString *)outPath;
+
+#pragma mark - 整合
+- (void)modifyCodeFile;
 @end
 
 NS_ASSUME_NONNULL_END

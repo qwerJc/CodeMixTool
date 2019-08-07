@@ -20,6 +20,7 @@
 		3279C0B022C4BFAE0099AA11 /* SpamCategoryModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3279C0AF22C4BFAE0099AA11 /* SpamCategoryModel.m */; };
 		3279C0B322C4C9410099AA11 /* SpamCodeTools.m in Sources */ = {isa = PBXBuildFile; fileRef = 3279C0B222C4C9410099AA11 /* SpamCodeTools.m */; };
 		3283BE1122BA3021005C2EAE /* MixClassNameManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3283BE1022BA3021005C2EAE /* MixClassNameManager.m */; };
+		329686A722FA83BB00A39210 /* IntegrateManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 329686A622FA83BB00A39210 /* IntegrateManager.m */; };
 		32A5DB4B22C1FA4800E2F12A /* SpamCodeCreateManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 32A5DB4A22C1FA4800E2F12A /* SpamCodeCreateManager.m */; };
 		32BE37C2225306AB001809E6 /* TableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 32BE37C1225306AB001809E6 /* TableViewCell.m */; };
 		32BE37C52253131D001809E6 /* pick@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 32BE37C32253131D001809E6 /* pick@2x.png */; };
@@ -54,6 +55,8 @@
 		3279C0B222C4C9410099AA11 /* SpamCodeTools.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpamCodeTools.m; sourceTree = "<group>"; };
 		3283BE0F22BA3021005C2EAE /* MixClassNameManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MixClassNameManager.h; sourceTree = "<group>"; };
 		3283BE1022BA3021005C2EAE /* MixClassNameManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MixClassNameManager.m; sourceTree = "<group>"; };
+		329686A522FA83BB00A39210 /* IntegrateManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntegrateManager.h; sourceTree = "<group>"; };
+		329686A622FA83BB00A39210 /* IntegrateManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IntegrateManager.m; sourceTree = "<group>"; };
 		32A5DB4922C1FA4800E2F12A /* SpamCodeCreateManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpamCodeCreateManager.h; sourceTree = "<group>"; };
 		32A5DB4A22C1FA4800E2F12A /* SpamCodeCreateManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpamCodeCreateManager.m; sourceTree = "<group>"; };
 		32BE37C0225306AB001809E6 /* TableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableViewCell.h; sourceTree = "<group>"; };
@@ -136,6 +139,7 @@
 			children = (
 				323E96222253360F00DF3995 /* FileManager.h */,
 				323E96232253360F00DF3995 /* FileManager.m */,
+				329686A422FA838000A39210 /* Integrate */,
 				323606C522CA0B8B00AB8971 /* Delete */,
 				32A5DB4822C1FA0F00E2F12A /* SpamCode */,
 				3283BE0E22BA2FEA005C2EAE /* MixClassName */,
@@ -190,6 +194,15 @@
 				3283BE1022BA3021005C2EAE /* MixClassNameManager.m */,
 			);
 			path = MixClassName;
+			sourceTree = "<group>";
+		};
+		329686A422FA838000A39210 /* Integrate */ = {
+			isa = PBXGroup;
+			children = (
+				329686A522FA83BB00A39210 /* IntegrateManager.h */,
+				329686A622FA83BB00A39210 /* IntegrateManager.m */,
+			);
+			path = Integrate;
 			sourceTree = "<group>";
 		};
 		32A5DB4822C1FA0F00E2F12A /* SpamCode */ = {
@@ -283,6 +296,7 @@
 				3283BE1122BA3021005C2EAE /* MixClassNameManager.m in Sources */,
 				32BE37C2225306AB001809E6 /* TableViewCell.m in Sources */,
 				323606C822CA0B9F00AB8971 /* DeleteManager.m in Sources */,
+				329686A722FA83BB00A39210 /* IntegrateManager.m in Sources */,
 				3279C0B322C4C9410099AA11 /* SpamCodeTools.m in Sources */,
 				3278A9A022C3131E0045C748 /* SpamPropertyModel.m in Sources */,
 				320F69C622C0B47B0080156C /* FileMixedHelper.m in Sources */,
@@ -427,7 +441,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = SR4ZEKCW75;
+				DEVELOPMENT_TEAM = ANTGV8UZTJ;
 				INFOPLIST_FILE = CodeMixTool/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -444,7 +458,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = SR4ZEKCW75;
+				DEVELOPMENT_TEAM = ANTGV8UZTJ;
 				INFOPLIST_FILE = CodeMixTool/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
