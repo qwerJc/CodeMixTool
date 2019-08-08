@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		320F69C622C0B47B0080156C /* FileMixedHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 320F69C522C0B47B0080156C /* FileMixedHelper.m */; };
+		321C3B0A22FBD58A00609CD0 /* JJCNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 321C3B0922FBD58A00609CD0 /* JJCNavigationController.m */; };
+		321C3B1322FC052800609CD0 /* DeleteFunctionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 321C3B1222FC052800609CD0 /* DeleteFunctionView.m */; };
+		321C3B1622FC053700609CD0 /* MixedFunctionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 321C3B1522FC053700609CD0 /* MixedFunctionView.m */; };
+		321C3B1922FC054F00609CD0 /* SpamCodeFuntionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 321C3B1822FC054F00609CD0 /* SpamCodeFuntionView.m */; };
+		321C3B1C22FC056C00609CD0 /* IntegrateFunctionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 321C3B1B22FC056C00609CD0 /* IntegrateFunctionView.m */; };
 		323606C822CA0B9F00AB8971 /* DeleteManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 323606C722CA0B9F00AB8971 /* DeleteManager.m */; };
 		323E96242253360F00DF3995 /* FileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 323E96232253360F00DF3995 /* FileManager.m */; };
 		3248F4DB22F40F7900CD06EC /* ModelLocator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3248F4DA22F40F7900CD06EC /* ModelLocator.m */; };
@@ -31,6 +36,16 @@
 /* Begin PBXFileReference section */
 		320F69C422C0B47B0080156C /* FileMixedHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileMixedHelper.h; sourceTree = "<group>"; };
 		320F69C522C0B47B0080156C /* FileMixedHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FileMixedHelper.m; sourceTree = "<group>"; };
+		321C3B0822FBD58A00609CD0 /* JJCNavigationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JJCNavigationController.h; sourceTree = "<group>"; };
+		321C3B0922FBD58A00609CD0 /* JJCNavigationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JJCNavigationController.m; sourceTree = "<group>"; };
+		321C3B1122FC052800609CD0 /* DeleteFunctionView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeleteFunctionView.h; sourceTree = "<group>"; };
+		321C3B1222FC052800609CD0 /* DeleteFunctionView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeleteFunctionView.m; sourceTree = "<group>"; };
+		321C3B1422FC053700609CD0 /* MixedFunctionView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MixedFunctionView.h; sourceTree = "<group>"; };
+		321C3B1522FC053700609CD0 /* MixedFunctionView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MixedFunctionView.m; sourceTree = "<group>"; };
+		321C3B1722FC054F00609CD0 /* SpamCodeFuntionView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpamCodeFuntionView.h; sourceTree = "<group>"; };
+		321C3B1822FC054F00609CD0 /* SpamCodeFuntionView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpamCodeFuntionView.m; sourceTree = "<group>"; };
+		321C3B1A22FC056C00609CD0 /* IntegrateFunctionView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntegrateFunctionView.h; sourceTree = "<group>"; };
+		321C3B1B22FC056C00609CD0 /* IntegrateFunctionView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IntegrateFunctionView.m; sourceTree = "<group>"; };
 		323606C622CA0B9F00AB8971 /* DeleteManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeleteManager.h; sourceTree = "<group>"; };
 		323606C722CA0B9F00AB8971 /* DeleteManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeleteManager.m; sourceTree = "<group>"; };
 		323E96222253360F00DF3995 /* FileManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileManager.h; sourceTree = "<group>"; };
@@ -78,6 +93,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		321C3B0722FBD51500609CD0 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				321C3B0822FBD58A00609CD0 /* JJCNavigationController.h */,
+				321C3B0922FBD58A00609CD0 /* JJCNavigationController.m */,
+				321C3B1422FC053700609CD0 /* MixedFunctionView.h */,
+				321C3B1522FC053700609CD0 /* MixedFunctionView.m */,
+				321C3B1122FC052800609CD0 /* DeleteFunctionView.h */,
+				321C3B1222FC052800609CD0 /* DeleteFunctionView.m */,
+				321C3B1A22FC056C00609CD0 /* IntegrateFunctionView.h */,
+				321C3B1B22FC056C00609CD0 /* IntegrateFunctionView.m */,
+				321C3B1722FC054F00609CD0 /* SpamCodeFuntionView.h */,
+				321C3B1822FC054F00609CD0 /* SpamCodeFuntionView.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		323606C522CA0B8B00AB8971 /* Delete */ = {
 			isa = PBXGroup;
 			children = (
@@ -112,6 +144,7 @@
 				325362EB2249C6F200F524F8 /* AppDelegate.m */,
 				325362ED2249C6F200F524F8 /* ViewController.h */,
 				325362EE2249C6F200F524F8 /* ViewController.m */,
+				321C3B0722FBD51500609CD0 /* View */,
 				326CAA67229E7859009E0BF4 /* TableVIew */,
 				326CAA68229E786E009E0BF4 /* FileManager */,
 				325362F02249C6F500F524F8 /* Assets.xcassets */,
@@ -292,14 +325,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				321C3B1922FC054F00609CD0 /* SpamCodeFuntionView.m in Sources */,
 				325362EF2249C6F200F524F8 /* ViewController.m in Sources */,
 				3283BE1122BA3021005C2EAE /* MixClassNameManager.m in Sources */,
+				321C3B1322FC052800609CD0 /* DeleteFunctionView.m in Sources */,
 				32BE37C2225306AB001809E6 /* TableViewCell.m in Sources */,
 				323606C822CA0B9F00AB8971 /* DeleteManager.m in Sources */,
 				329686A722FA83BB00A39210 /* IntegrateManager.m in Sources */,
 				3279C0B322C4C9410099AA11 /* SpamCodeTools.m in Sources */,
 				3278A9A022C3131E0045C748 /* SpamPropertyModel.m in Sources */,
 				320F69C622C0B47B0080156C /* FileMixedHelper.m in Sources */,
+				321C3B1C22FC056C00609CD0 /* IntegrateFunctionView.m in Sources */,
 				32BE37CC22531EB9001809E6 /* FunctionModel.m in Sources */,
 				325362F72249C6F500F524F8 /* main.m in Sources */,
 				3279C0B022C4BFAE0099AA11 /* SpamCategoryModel.m in Sources */,
@@ -307,6 +343,8 @@
 				325362EC2249C6F200F524F8 /* AppDelegate.m in Sources */,
 				3248F4DB22F40F7900CD06EC /* ModelLocator.m in Sources */,
 				323E96242253360F00DF3995 /* FileManager.m in Sources */,
+				321C3B0A22FBD58A00609CD0 /* JJCNavigationController.m in Sources */,
+				321C3B1622FC053700609CD0 /* MixedFunctionView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

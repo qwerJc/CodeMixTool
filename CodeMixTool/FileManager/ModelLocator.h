@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+#define kWindowHeight 640
+#define kWindowWidth 640
+#define kMarginTop(originY,height) kWindowHeight - originY - height
+
 #define model [ModelLocator sharedModelLocator]
 
 NS_ASSUME_NONNULL_BEGIN
